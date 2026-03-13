@@ -1,0 +1,168 @@
+.topNav {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: 0 20px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: fit-content;
+  padding-right: 20px;
+  border-right: 1px solid var(--border-primary);
+}
+
+.logoIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #1E293B, #0F172A);
+  border: 1.5px solid rgba(6, 182, 212, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoLetter {
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--accent-primary);
+  line-height: 1;
+  letter-spacing: -1px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.logoText {
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.logoAi {
+  color: var(--text-tertiary);
+  margin-left: 3px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  overflow-x: auto;
+  flex: 1;
+  padding: 0 4px;
+  scrollbar-width: none;
+}
+
+.tools::-webkit-scrollbar {
+  display: none;
+}
+
+.toolTab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+.toolTab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.toolTabActive {
+  color: var(--text-primary) !important;
+  background: var(--bg-active) !important;
+}
+
+.toolTabActiveIcon {
+  color: var(--accent-primary);
+}
+
+.toolTabIndicator {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: 1px;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.toolTabLabel {
+  font-size: inherit;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: fit-content;
+  padding-left: 20px;
+  border-left: 1px solid var(--border-primary);
+}
+
+.apiBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.apiBtn:hover {
+  background: var(--bg-hover);
+}
+
+.apiDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+}
+
+@media (max-width: 1200px) {
+  .toolTabLabel {
+    display: none;
+  }
+
+  .toolTab {
+    padding: 8px;
+  }
+}
