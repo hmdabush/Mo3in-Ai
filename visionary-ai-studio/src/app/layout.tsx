@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mo3in AI — All-in-One AI Creative Studio",
+  title: "Mo3in AI — منصة الذكاء الاصطناعي الإبداعية",
   description:
     "Advanced AI platform for marketing agencies, content creators, and e-commerce managers. Automate product photography, visual storytelling, and social media campaigns.",
   keywords: [
