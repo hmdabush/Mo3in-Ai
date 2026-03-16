@@ -158,22 +158,24 @@ export default function Plan() {
                                     <div className={styles.postHeader}>
                                         <div className={styles.postNum}>Post #{i + 1}</div>
                                         <div className={styles.postMeta}>
-                                            <span className={styles.postPlatform}>{post.platform}</span>
-                                            <span className={styles.postTime}>{post.bestTime}</span>
+                                            {post.platform && <span className={styles.postPlatform}>{post.platform}</span>}
+                                            {post.bestTime && <span className={styles.postTime}>{post.bestTime}</span>}
                                         </div>
                                     </div>
                                     <div className={styles.postText}>{post.text}</div>
+                                    {post.hashtags && post.hashtags.length > 0 && (
                                     <div className={styles.postHashtags}>
                                         {post.hashtags.map((tag, j) => (
                                             <span key={j} className={styles.hashTag}><Hash size={10} />{tag.replace('#', '')}</span>
                                         ))}
                                     </div>
+                                    )}
                                     <div className={styles.postVisual}>
                                         <div className={styles.postVisualLabel}><Eye size={10} /> Visual Idea</div>
                                         {post.visualIdea}
                                     </div>
                                     <div className={styles.postActions}>
-                                        <button className={styles.postCopyBtn} onClick={() => handleCopy(post.text + '\n\n' + post.hashtags.join(' '), i)}>
+                                        <button className={styles.postCopyBtn} onClick={() => handleCopy(post.text + '\n\n' + (post.hashtags || []).join(' '), i)}>
                                             {copiedIdx === i ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy</>}
                                         </button>
                                     </div>

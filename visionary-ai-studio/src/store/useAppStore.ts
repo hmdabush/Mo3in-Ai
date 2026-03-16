@@ -182,7 +182,7 @@ export interface PlanState {
   targetMarket: string;
   language: string;
   style: string;
-  generatedPosts: Array<{ text: string; visualIdea: string }>;
+  generatedPosts: Array<{ text: string; visualIdea: string; hashtags?: string[]; platform?: string; bestTime?: string }>;
   isGenerating: boolean;
 }
 
