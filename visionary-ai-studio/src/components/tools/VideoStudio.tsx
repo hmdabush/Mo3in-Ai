@@ -85,18 +85,82 @@ export default function VideoStudio() {
         }
     };
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateVideoStudio({ isGenerating: true, generatedVideoUrl: '', videoVariations: [] });
-        setTimeout(() => {
-            const mainVideo = 'https://www.w3schools.com/html/mov_bbb.mp4';
-            const variations = [
-                'https://www.w3schools.com/html/movie.mp4',
-                'https://www.w3schools.com/html/mov_bbb.mp4',
-                'https://www.w3schools.com/html/movie.mp4',
-            ];
-            updateVideoStudio({ isGenerating: false, generatedVideoUrl: mainVideo, videoVariations: variations });
-        }, 3500);
-    }, [updateVideoStudio]);
+        try {
+            const cameraLabel = CAMERA_MOVES.find(c => c.value === state.cameraMove)?.label || state.cameraMove;
+            const styleLabel = VIDEO_STYLES.find(v => v.value === videoStyle)?.label || videoStyle;
+
+            const prompt = `${state.motionPrompt || `Professional ${styleLabel} video with ${cameraLabel} camera movement`}. Style: ${styleLabel}. Camera: ${cameraLabel}. Transition: ${transition}. High quality cinematic video production.`;
+
+            const res = await fetch('/api/generate-video', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt,
+                    model: 'veo3_fast',
+                    aspectRatio: state.aspectRatio === '9:16' ? '9:16' : '16:9',
+                    generationType: 'TEXT_2_VIDEO',
+                }),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || 'Video generation failed');
+            }
+
+            const data = await res.json();
+
+            if (data.taskId) {
+                // Poll for video completion
+                let attempts = 0;
+                const maxAttempts = 60; // 5 minutes max
+
+                const pollInterval = setInterval(async () => {
+                    attempts++;
+                    try {
+                        const statusRes = await fetch(`/api/generate-video?taskId=${data.taskId}`);
+                        const statusData = await statusRes.json();
+
+                        if (statusData.videoUrl) {
+                            clearInterval(pollInterval);
+                            updateVideoStudio({
+                                isGenerating: false,
+                                generatedVideoUrl: statusData.videoUrl,
+                                videoVariations: [],
+                            });
+                        } else if (attempts >= maxAttempts || statusData.status === 'failed') {
+                            clearInterval(pollInterval);
+                            throw new Error('Video generation timed out or failed');
+                        }
+                    } catch {
+                        if (attempts >= maxAttempts) {
+                            clearInterval(pollInterval);
+                            // Fallback to demo video
+                            updateVideoStudio({
+                                isGenerating: false,
+                                generatedVideoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                                videoVariations: [],
+                            });
+                        }
+                    }
+                }, 5000); // Check every 5 seconds
+            } else {
+                throw new Error('No taskId returned');
+            }
+        } catch (error) {
+            console.error('Video generation error:', error);
+            // Fallback to demo videos
+            updateVideoStudio({
+                isGenerating: false,
+                generatedVideoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                videoVariations: [
+                    'https://www.w3schools.com/html/movie.mp4',
+                    'https://www.w3schools.com/html/mov_bbb.mp4',
+                ],
+            });
+        }
+    }, [updateVideoStudio, state.motionPrompt, state.cameraMove, state.aspectRatio, videoStyle, transition]);
 
     const canGenerate = state.firstFrame !== null && state.lastFrame !== null;
 

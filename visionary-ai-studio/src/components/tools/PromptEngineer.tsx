@@ -73,9 +73,66 @@ export default function PromptEngineer() {
         );
     }, []);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updatePrompt({ isGenerating: true });
-        setTimeout(() => {
+        try {
+            const templateLabel = PROMPT_TEMPLATES.find(t => t.value === selectedTemplate)?.label || selectedTemplate;
+            const modelLabel = AI_MODELS.find(m => m.value === targetModel)?.label || targetModel;
+            const styleLabels = selectedStyles.map(s => STYLE_LIBRARY.find(sl => sl.value === s)?.label || s).join(', ');
+
+            const res = await fetch('/api/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tool: 'prompt-engineer',
+                    systemPrompt: `You are an expert AI image prompt engineer. You specialize in crafting highly detailed, professional prompts for AI image generation models like Midjourney, DALL-E 3, Stable Diffusion, and Flux. Always respond in JSON format only with no additional text.`,
+                    prompt: `Generate a detailed, professional AI image generation prompt with the following parameters:
+- Template: ${templateLabel}
+- Target AI Model: ${modelLabel}
+- Style Tags: ${styleLabels}
+- User Instructions: ${state.instructions || 'Generate a high-quality prompt based on the template and styles'}
+
+Return a JSON object (no text before or after) in this format:
+{
+  "mainPrompt": "A very detailed prompt (200+ words) describing the scene, lighting, camera, lens, color palette, composition, post-processing, and style references. Be extremely specific about technical details.",
+  "variations": [
+    "Variation 1: Same subject but different lighting/mood/angle (100+ words)",
+    "Variation 2: Same subject but different environment/setting (100+ words)",
+    "Variation 3: Same subject but different artistic style/post-processing (100+ words)"
+  ]
+}
+
+Make the main prompt extremely detailed with specific camera settings (lens mm, f-stop, ISO), lighting setup, color palette hex codes, post-processing steps, and style references.`,
+                    maxTokens: 3000,
+                }),
+            });
+
+            if (!res.ok) throw new Error('API request failed');
+            const data = await res.json();
+
+            let mainPrompt = DUMMY_PROMPT;
+            let vars = DUMMY_VARIATIONS;
+
+            try {
+                const text = data.text.trim();
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+                mainPrompt = parsed.mainPrompt || DUMMY_PROMPT;
+                vars = parsed.variations || DUMMY_VARIATIONS;
+            } catch {
+                console.error('Failed to parse prompt response:', data.text);
+            }
+
+            const timestamp = new Date().toLocaleTimeString();
+            updatePrompt({
+                isGenerating: false,
+                generatedPrompt: mainPrompt,
+                promptHistory: [{ prompt: mainPrompt, timestamp }, ...state.promptHistory],
+            });
+            setVariations(vars);
+            setShowVariations(true);
+        } catch (error) {
+            console.error('Generation error:', error);
             const timestamp = new Date().toLocaleTimeString();
             updatePrompt({
                 isGenerating: false,
@@ -84,8 +141,8 @@ export default function PromptEngineer() {
             });
             setVariations(DUMMY_VARIATIONS);
             setShowVariations(true);
-        }, 2500);
-    }, [updatePrompt, state.promptHistory]);
+        }
+    }, [updatePrompt, state.promptHistory, state.instructions, selectedTemplate, targetModel, selectedStyles]);
 
     const handleCopy = useCallback((text: string, varIdx?: number) => {
         navigator.clipboard.writeText(text);

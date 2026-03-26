@@ -1,0 +1,60 @@
+.layout { height: calc(100vh - 94px); overflow-y: auto; display: flex; flex-direction: column; background: var(--bg-primary); }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px 0; flex-wrap: wrap; gap: 16px; }
+.headerLeft { display: flex; align-items: center; gap: 14px; }
+.headerIcon { color: #EC4899; }
+.headerLeft h1 { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+.headerLeft p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.saveBtn { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #06B6D4, #0891B2); border: none; border-radius: var(--radius-sm); color: white; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 200ms; }
+.saveBtn:hover { box-shadow: 0 4px 16px rgba(6,182,212,0.4); transform: translateY(-1px); }
+.content { padding: 24px 32px 60px; display: flex; flex-direction: column; gap: 28px; }
+.section { display: flex; flex-direction: column; gap: 14px; }
+.section h2 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.sectionHeader { display: flex; align-items: center; justify-content: space-between; }
+.addBtn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: var(--radius-sm); color: #8B5CF6; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 150ms; }
+.addBtn:hover { background: rgba(139,92,246,0.15); }
+
+/* Brand Identity */
+.brandIdentity { display: flex; gap: 24px; align-items: flex-start; padding: 24px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); }
+.brandLogoArea { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.logoPlaceholder { width: 90px; height: 90px; border-radius: 20px; background: linear-gradient(145deg, #1E293B, #0F172A); border: 2px solid rgba(6,182,212,0.35); display: flex; align-items: center; justify-content: center; }
+.logoLetter { font-size: 40px; font-weight: 900; color: var(--accent-primary); font-family: 'Plus Jakarta Sans', sans-serif; }
+.changeLogoBtn { display: flex; align-items: center; gap: 4px; padding: 5px 12px; background: transparent; border: 1px solid var(--border-primary); border-radius: 6px; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 150ms; }
+.changeLogoBtn:hover { border-color: var(--border-secondary); color: var(--text-secondary); }
+.brandFields { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.input { padding: 11px 14px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input:focus { outline: none; border-color: rgba(6,182,212,0.4); }
+
+/* Colors */
+.colorsGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.colorCard { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); overflow: hidden; transition: all 200ms; }
+.colorCard:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+.colorPreview { height: 80px; cursor: pointer; position: relative; transition: all 200ms; }
+.colorPreview:hover { filter: brightness(1.1); }
+.colorPicker { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.colorInfo { padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
+.colorName { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.colorHex { display: flex; align-items: center; gap: 4px; background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: 500; cursor: pointer; font-family: monospace; transition: color 150ms; padding: 2px 6px; border-radius: 4px; }
+.colorHex:hover { color: var(--accent-primary); background: rgba(6,182,212,0.05); }
+
+/* Fonts */
+.fontsList { display: flex; flex-direction: column; gap: 10px; }
+.fontCard { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); transition: all 150ms; }
+.fontCard:hover { border-color: var(--border-secondary); }
+.fontInfo { display: flex; flex-direction: column; gap: 3px; }
+.fontLabel { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.fontMeta { font-size: 11px; color: var(--text-muted); }
+.fontSample { color: var(--text-secondary); }
+
+/* Guidelines */
+.guidelinesGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.guidelineCard { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); transition: all 150ms; }
+.guidelineCard:hover { border-color: var(--border-secondary); }
+.guidelineIcon { font-size: 28px; flex-shrink: 0; }
+.guidelineTitle { font-size: 13px; font-weight: 700; color: var(--text-primary); display: block; }
+.guidelineDesc { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: block; }
+.editBtn { margin-left: auto; padding: 6px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: all 150ms; }
+.editBtn:hover { background: var(--bg-hover); color: var(--text-secondary); }
+
+@media (max-width: 768px) { .brandIdentity { flex-direction: column; align-items: center; } .guidelinesGrid { grid-template-columns: 1fr; } }

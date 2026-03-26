@@ -58,13 +58,36 @@ export default function Photoshoot() {
         }
     }, [state.selectedShots, updatePhotoshoot]);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updatePhotoshoot({ isGenerating: true, generatedImages: [] });
-        setTimeout(() => {
+        try {
+            const lightLabel = LIGHTING_PRESETS.find(l => l.value === lighting)?.label || lighting;
+            const bgLabel = BG_PRESETS.find(b => b.value === bgPreset)?.label || bgPreset;
+            const allImages: string[] = [];
+
+            for (const shot of state.selectedShots) {
+                const shotLabel = SHOT_TYPES.find(s => s.value === shot)?.label || shot;
+                const prompt = `Professional product photography, ${shotLabel} shot. Lighting: ${lightLabel}. Background: ${bgLabel}. ${state.stylePrompt || 'Clean, commercial product photo'}. Ultra high quality, studio photography, 8K.`;
+
+                const res = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, numberOfImages: 1, aspectRatio: '1:1' }),
+                });
+
+                if (!res.ok) throw new Error('Image generation failed');
+                const data = await res.json();
+                if (data.images?.[0]) allImages.push(data.images[0]);
+                else allImages.push(`https://picsum.photos/seed/photo${Date.now()}/600/600`);
+            }
+
+            updatePhotoshoot({ isGenerating: false, generatedImages: allImages });
+        } catch (error) {
+            console.error('Photoshoot error:', error);
             const imgs = state.selectedShots.map((_, i) => `https://picsum.photos/seed/photo${i}${Date.now()}/600/600`);
             updatePhotoshoot({ isGenerating: false, generatedImages: imgs });
-        }, 2500);
-    }, [state.selectedShots, updatePhotoshoot]);
+        }
+    }, [state.selectedShots, state.stylePrompt, updatePhotoshoot, lighting, bgPreset]);
 
     const handleDownload = useCallback((imgUrl: string, shotName: string, is4K: boolean) => {
         const canvas = document.createElement('canvas');

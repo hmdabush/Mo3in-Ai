@@ -132,7 +132,7 @@ const MARKETING_SECTIONS: SectionDef[] = [
 
 // --- DUMMY DATA GENERATORS ---
 
-const DUMMY_CARDS: Record<string, { title: string; icon: string; content: string; highlight: string }> = {
+let DUMMY_CARDS: Record<string, { title: string; icon: string; content: string; highlight: string }> = {
     swot: {
         title: 'SWOT Analysis', icon: '',
         content: `<strong>Strengths:</strong><ul><li>Strong brand identity and visual language</li><li>Premium product quality and craftsmanship</li></ul><strong>Weaknesses:</strong><ul><li>Limited digital presence in target markets</li><li>Higher price point than competitors</li></ul><strong>Opportunities:</strong><ul><li>Growing demand for premium products in GCC</li><li>Social commerce expansion</li></ul><strong>Threats:</strong><ul><li>Increasing competition from global brands</li><li>Economic fluctuations in target markets</li></ul>`,
@@ -761,18 +761,131 @@ export default function Marketing() {
     const updateMarketing = useAppStore((s) => s.updateMarketing);
     const state = project.marketing;
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateMarketing({ isGenerating: true, generatedCards: null });
-        setTimeout(() => {
+        try {
+            const res = await fetch('/api/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tool: 'marketing-strategy',
+                    systemPrompt: `You are a world-class marketing strategist and brand consultant. Generate comprehensive, data-driven marketing analysis. Always respond in JSON format only.`,
+                    prompt: `Generate a complete strategic marketing analysis for this brand:
+- Brand Name: ${state.brandName}
+- Brand URL: ${state.brandLink || 'N/A'}
+- Industry: ${state.industry}
+- Brief: ${state.projectBrief}
+- Language: ${state.language === 'ar' ? 'Arabic' : 'English'}
+
+Return a JSON object with these 8 keys. Each key has: title, content (HTML with <strong>, <ul>, <li> tags), and highlight (one-line key insight):
+{
+  "swot": { "title": "SWOT Analysis", "content": "<strong>Strengths:</strong><ul><li>...</li></ul><strong>Weaknesses:</strong>...<strong>Opportunities:</strong>...<strong>Threats:</strong>...", "highlight": "Key Insight: ..." },
+  "persona": { "title": "Real Persona", "content": "<strong>Name:</strong> ...<br/><strong>Location:</strong>...<strong>Behavior:</strong><ul><li>...</li></ul>", "highlight": "Primary Channel: ..." },
+  "competitors": { "title": "Competitor Gaps", "content": "<ul><li><strong>Gap 1:</strong>...</li>...</ul>", "highlight": "Biggest Opportunity: ..." },
+  "value": { "title": "Value Proposition", "content": "<strong>Core Promise:</strong>...<strong>Key Differentiators:</strong><ul>...</ul>", "highlight": "Tagline: ..." },
+  "gtm": { "title": "GTM Strategy", "content": "<strong>Phase 1:</strong><ul>...</ul><strong>Phase 2:</strong>...<strong>Phase 3:</strong>...", "highlight": "Expected ROI: ..." },
+  "pricing": { "title": "Pricing Logic", "content": "<strong>Strategy:</strong>...<ul><li><strong>Entry:</strong>...</li>...</ul>", "highlight": "Sweet Spot: ..." },
+  "roadmap": { "title": "30-60-90 Roadmap", "content": "<strong>30 Days:</strong><ul>...</ul><strong>60 Days:</strong>...<strong>90 Days:</strong>...", "highlight": "90-Day Target: ..." },
+  "kpi": { "title": "KPI Dashboard", "content": "<ul><li><strong>CAC:</strong>...</li><li><strong>LTV:</strong>...</li>...</ul>", "highlight": "North Star Metric: ..." }
+}
+
+Make the analysis specific to the ${state.industry} industry and ${state.brandName} brand. Use real market data and insights.`,
+                    maxTokens: 4096,
+                }),
+            });
+
+            if (!res.ok) throw new Error('API failed');
+            const data = await res.json();
+
+            let parsedCards: Record<string, { title: string; content: string; highlight: string }> | null = null;
+            try {
+                const text = data.text.trim();
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                parsedCards = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+            } catch {
+                console.error('Failed to parse strategy:', data.text);
+            }
+
+            if (parsedCards) {
+                // Merge with DUMMY_CARDS icons
+                const cards: Record<string, string> = {};
+                Object.keys(DUMMY_CARDS).forEach((k) => {
+                    if (parsedCards![k]) {
+                        DUMMY_CARDS[k] = { ...DUMMY_CARDS[k], ...parsedCards![k] };
+                    }
+                    cards[k] = 'generated';
+                });
+                updateMarketing({ isGenerating: false, generatedCards: cards });
+            } else {
+                // Fallback to dummy
+                const cards: Record<string, string> = {};
+                Object.keys(DUMMY_CARDS).forEach((k) => { cards[k] = 'generated'; });
+                updateMarketing({ isGenerating: false, generatedCards: cards });
+            }
+        } catch (error) {
+            console.error('Strategy generation error:', error);
             const cards: Record<string, string> = {};
             Object.keys(DUMMY_CARDS).forEach((k) => { cards[k] = 'generated'; });
             updateMarketing({ isGenerating: false, generatedCards: cards });
-        }, 3500);
-    }, [updateMarketing]);
+        }
+    }, [updateMarketing, state.brandName, state.brandLink, state.industry, state.projectBrief, state.language]);
 
-    const handleSectionGenerate = useCallback((section: MarketingSection) => {
+    const handleSectionGenerate = useCallback(async (section: MarketingSection) => {
         updateMarketing({ generatingSection: section });
-        setTimeout(() => {
+        try {
+            const sectionDef = MARKETING_SECTIONS.find(s => s.id === section);
+            const sectionName = sectionDef?.name || section;
+
+            const sectionPrompts: Record<string, string> = {
+                audit: `Perform a comprehensive marketing audit for ${state.brandName} (${state.industry}). Return JSON: { "overallScore": number(0-100), "categories": [{ "name": string, "score": number, "weight": string, "findings": [string] }], "topIssues": [string] }. Include 6 categories and 4 top issues.`,
+                copy: `Generate optimized marketing copy for ${state.brandName} (${state.industry}). Return JSON: { "headlines": [{ "before": string, "after": string }], "ctas": [{ "before": string, "after": string }], "bodyRewrite": string }. Include 3 headlines and 3 CTAs.`,
+                emails: `Create an email sequence for ${state.brandName} (${state.industry}). Return JSON: { "sequenceType": string, "emails": [{ "subject": string, "preview": string, "dayNumber": number, "purpose": string }] }. Include 5 emails.`,
+                social: `Create a 10-day social media calendar for ${state.brandName} (${state.industry}). Return JSON: { "posts": [{ "day": number, "pillar": string, "platform": string, "hook": string, "time": string }] }. Include 10 posts.`,
+                ads: `Create ad campaigns for ${state.brandName} (${state.industry}) on multiple platforms. Return JSON: { "platforms": [{ "name": string, "headline": string, "description": string, "cta": string, "budget": string }] }. Include Google, Meta, LinkedIn, TikTok.`,
+                funnel: `Analyze the marketing funnel for ${state.brandName} (${state.industry}). Return JSON: { "stages": [{ "name": string, "conversionRate": string, "dropOff": string, "recommendation": string }] }. Include 6 stages from Awareness to Retention.`,
+                competitors: `Analyze competitors for ${state.brandName} (${state.industry}). Return JSON: { "competitors": [{ "name": string, "positioning": string, "pricing": string, "strengths": [string], "weaknesses": [string] }] }. Include 3 competitors.`,
+                landing: `Perform a landing page CRO audit for ${state.brandName} (${state.industry}). Return JSON: { "score": number(0-100), "checks": [{ "area": string, "status": "pass"|"fail"|"warning", "note": string }] }. Include 7 checks.`,
+                launch: `Create an 8-week launch playbook for ${state.brandName} (${state.industry}). Return JSON: { "weeks": [{ "week": number, "phase": string, "tasks": [string] }] }. Include 8 weeks.`,
+                proposal: `Create a client proposal for ${state.brandName} (${state.industry}). Return JSON: { "sections": [{ "title": string, "content": string }], "pricing": [{ "tier": string, "price": string, "features": [string] }] }. Include 4 sections and 3 tiers.`,
+                report: `Generate a marketing report for ${state.brandName} (${state.industry}). Return JSON: { "sections": [{ "title": string, "content": string }], "pricing": [{ "tier": string, "price": string, "features": [string] }] }.`,
+                seo: `Perform an SEO audit for ${state.brandName} (${state.industry}). Return JSON: { "score": number(0-100), "onPage": [{ "check": string, "status": "pass"|"fail"|"warning", "detail": string }], "technicalIssues": [string] }. Include 10 on-page checks and 4 technical issues.`,
+                brand: `Analyze brand voice for ${state.brandName} (${state.industry}). Return JSON: { "voiceDimensions": [{ "dimension": string, "score": number(0-100), "description": string }], "toneMap": [{ "context": string, "tone": string }], "personality": [string] }. Include 4 dimensions, 5 tone contexts, 5 personality traits.`,
+            };
+
+            const prompt = sectionPrompts[section] || `Generate ${sectionName} analysis for ${state.brandName}. Return relevant JSON.`;
+
+            const res = await fetch('/api/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tool: `marketing-${section}`,
+                    systemPrompt: `You are an expert marketing analyst. Generate specific, actionable, data-driven results for the ${sectionName} analysis. Respond ONLY in valid JSON format with no additional text.`,
+                    prompt,
+                    maxTokens: 3000,
+                }),
+            });
+
+            if (!res.ok) throw new Error('API failed');
+            const data = await res.json();
+
+            let result: SectionResult | null = null;
+            try {
+                const text = data.text.trim();
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+            } catch {
+                console.error('Failed to parse section result:', data.text);
+                result = getDummyResult(section);
+            }
+
+            if (result) {
+                updateMarketing({
+                    generatingSection: null,
+                    sectionResults: { ...state.sectionResults, [section]: result },
+                });
+            }
+        } catch (error) {
+            console.error('Section generation error:', error);
             const result = getDummyResult(section);
             if (result) {
                 updateMarketing({
@@ -780,8 +893,8 @@ export default function Marketing() {
                     sectionResults: { ...state.sectionResults, [section]: result },
                 });
             }
-        }, 2500);
-    }, [updateMarketing, state.sectionResults]);
+        }
+    }, [updateMarketing, state.sectionResults, state.brandName, state.industry, state.brandLink, state.projectBrief, state.language]);
 
     const canGenerate = state.brandName.trim() && state.industry;
     const activeSection = MARKETING_SECTIONS.find(s => s.id === state.activeSection) || MARKETING_SECTIONS[0];

@@ -60,17 +60,68 @@ export default function Plan() {
     const [expandedPost, setExpandedPost] = useState<number | null>(null);
     const [budget, setBudget] = useState('500');
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updatePlan({ isGenerating: true, generatedPosts: [] });
-        setTimeout(() => {
+        try {
+            const marketLabel = MARKET_OPTIONS.find(m => m.value === state.targetMarket)?.label || state.targetMarket;
+            const langLabel = LANG_OPTIONS.find(l => l.value === state.language)?.label || state.language;
+            const styleLabel = STYLE_OPTIONS.find(s => s.value === state.style)?.label || state.style;
+            const platformLabel = PLATFORM_OPTIONS.find(p => p.value === platform)?.label || platform;
+
+            const res = await fetch('/api/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tool: 'plan',
+                    systemPrompt: `أنت خبير تسويق رقمي ومتخصص في السوشيال ميديا للسوق العربي. أنشئ محتوى إبداعي وجذاب يناسب الجمهور المستهدف. أجب دائماً بصيغة JSON فقط بدون أي نص إضافي.`,
+                    prompt: `أنشئ ${postCount} بوست لحملة سوشيال ميديا بالمواصفات التالية:
+- هدف الحملة: ${state.campaignGoal}
+- السوق المستهدف: ${marketLabel}
+- اللغة/اللهجة: ${langLabel}
+- الأسلوب: ${styleLabel}
+- المنصة الرئيسية: ${platformLabel}
+
+أرجع النتيجة كـ JSON array بالشكل التالي (بدون أي نص قبله أو بعده):
+[
+  {
+    "text": "نص البوست كامل باللهجة المطلوبة",
+    "visualIdea": "وصف تفصيلي بالإنجليزي للتصميم المرئي المقترح",
+    "hashtags": ["#هاشتاق1", "#هاشتاق2", "#هاشتاق3"],
+    "platform": "${platform}",
+    "bestTime": "أفضل وقت للنشر"
+  }
+]
+
+مهم: استخدم اللهجة ${langLabel} بشكل طبيعي وأصيل. اكتب محتوى إبداعي حقيقي مناسب للمنصة.`,
+                    maxTokens: 4096,
+                }),
+            });
+
+            if (!res.ok) throw new Error('API request failed');
+            const data = await res.json();
+
+            // Parse the JSON response
+            let posts;
+            try {
+                const text = data.text.trim();
+                // Try to extract JSON from the response
+                const jsonMatch = text.match(/\[[\s\S]*\]/);
+                posts = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+            } catch {
+                console.error('Failed to parse posts:', data.text);
+                // Fallback to dummy posts
+                posts = DUMMY_POSTS.slice(0, parseInt(postCount));
+            }
+
+            updatePlan({ isGenerating: false, generatedPosts: posts });
+        } catch (error) {
+            console.error('Generation error:', error);
+            // Fallback to dummy data on error
             const count = parseInt(postCount);
             const posts = DUMMY_POSTS.slice(0, Math.min(count, DUMMY_POSTS.length));
-            while (posts.length < count) {
-                posts.push(DUMMY_POSTS[posts.length % DUMMY_POSTS.length]);
-            }
             updatePlan({ isGenerating: false, generatedPosts: posts });
-        }, 3000);
-    }, [updatePlan, postCount]);
+        }
+    }, [updatePlan, postCount, state.targetMarket, state.language, state.style, state.campaignGoal, platform]);
 
     const handleCopy = useCallback((text: string, idx: number) => {
         navigator.clipboard.writeText(text);

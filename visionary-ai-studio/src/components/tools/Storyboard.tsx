@@ -51,12 +51,39 @@ export default function Storyboard() {
     const [genre, setGenre] = useState('commercial');
     const [previewScene, setPreviewScene] = useState<string | null>(null);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateStoryboard({ isGenerating: true, generatedScenes: [] });
-        setTimeout(() => {
+        try {
+            const genreLabel = GENRE_OPTIONS.find(g => g.value === genre)?.label || genre;
+            const allScenes: string[] = [];
+
+            for (let i = 0; i < 9; i++) {
+                const sceneTitle = SCENE_TITLES[i];
+                const sceneDesc = SCENE_DESCRIPTIONS[i];
+                const prompt = `Cinematic storyboard frame for a ${genreLabel} video ad. Scene ${i + 1}: ${sceneTitle} - ${sceneDesc}. Story: ${state.storyVision}. Aspect ratio ${state.aspectRatio}. Professional storyboard art style, cinematic composition, dramatic lighting, film production quality.`;
+
+                const res = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt,
+                        numberOfImages: 1,
+                        aspectRatio: state.aspectRatio === '16:9' ? '16:9' : '9:16',
+                    }),
+                });
+
+                if (!res.ok) throw new Error('Scene generation failed');
+                const data = await res.json();
+                if (data.images?.[0]) allScenes.push(data.images[0]);
+                else allScenes.push(`https://picsum.photos/seed/story${i}/600/400`);
+            }
+
+            updateStoryboard({ isGenerating: false, generatedScenes: allScenes });
+        } catch (error) {
+            console.error('Storyboard generation error:', error);
             updateStoryboard({ isGenerating: false, generatedScenes: DUMMY_SCENES });
-        }, 3000);
-    }, [updateStoryboard]);
+        }
+    }, [updateStoryboard, state.storyVision, state.aspectRatio, genre]);
 
     const handleDownload = useCallback((imgUrl: string, sceneName: string, is4K: boolean) => {
         const canvas = document.createElement('canvas');

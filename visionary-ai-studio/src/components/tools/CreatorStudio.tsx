@@ -87,16 +87,47 @@ export default function CreatorStudio() {
         });
     }, [updateCreatorStudio]);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateCreatorStudio({ isGenerating: true, generatedImages: [] });
         setFavorites(new Set());
-        setTimeout(() => {
+        try {
+            const styleLabel = STYLE_PRESETS.find(s => s.value === selectedStyle)?.label || selectedStyle;
+            const lightLabel = LIGHTING_OPTIONS.find(l => l.value === state.lighting)?.label || state.lighting;
+            const angleLabel = ANGLE_OPTIONS.find(a => a.value === state.angle)?.label || state.angle;
+            const bgLabel = BACKGROUND_PRESETS.find(b => b.value === selectedBg)?.label || selectedBg;
+
+            const prompt = `Professional ${styleLabel} product photography. ${state.visionPrompt || 'High-end commercial product shot'}. Lighting: ${lightLabel}. Camera angle: ${angleLabel}. Background: ${bgLabel}. Ultra high quality, 8K resolution, professional studio photography.`;
+
+            const allImages: string[] = [];
+            const batchCount = Math.ceil(variationCount / 4);
+
+            for (let i = 0; i < batchCount; i++) {
+                const remaining = variationCount - allImages.length;
+                const count = Math.min(remaining, 4);
+
+                const res = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, numberOfImages: count, aspectRatio: '1:1' }),
+                });
+
+                if (!res.ok) throw new Error('Image generation failed');
+                const data = await res.json();
+                if (data.images) allImages.push(...data.images);
+            }
+
+            updateCreatorStudio({
+                isGenerating: false,
+                generatedImages: allImages.length > 0 ? allImages : DUMMY_IMAGES.slice(0, variationCount),
+            });
+        } catch (error) {
+            console.error('Image generation error:', error);
             updateCreatorStudio({
                 isGenerating: false,
                 generatedImages: DUMMY_IMAGES.slice(0, variationCount),
             });
-        }, 3000);
-    }, [updateCreatorStudio, variationCount]);
+        }
+    }, [updateCreatorStudio, variationCount, selectedStyle, state.lighting, state.angle, state.visionPrompt, selectedBg]);
 
     const handleReset = useCallback(() => {
         updateCreatorStudio({

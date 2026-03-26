@@ -42,13 +42,35 @@ export default function Campaign() {
         );
     }, []);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateCampaign({ isGenerating: true, generatedPosts: [] });
-        setTimeout(() => {
+        try {
+            const moodLabel = MOODS.find(m => m.value === state.moodPreset)?.label || state.moodPreset;
+            const allImages: string[] = [];
+
+            for (let i = 0; i < 6; i++) {
+                const step = FUNNEL_STEPS[i];
+                const prompt = `Social media marketing post design for ${step} stage. Theme: ${state.designTheme}. Mood: ${moodLabel}. Platform: ${selectedPlatforms[0] || 'Instagram'}. Professional social media ad design, ${moodLabel} aesthetic, high quality graphic design, modern layout.`;
+
+                const res = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, numberOfImages: 1, aspectRatio: '1:1' }),
+                });
+
+                if (!res.ok) throw new Error('Image generation failed');
+                const data = await res.json();
+                if (data.images?.[0]) allImages.push(data.images[0]);
+                else allImages.push(`https://picsum.photos/seed/camp${i}${Date.now()}/600/600`);
+            }
+
+            updateCampaign({ isGenerating: false, generatedPosts: allImages });
+        } catch (error) {
+            console.error('Campaign generation error:', error);
             const posts = Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/camp${i}${Date.now()}/600/600`);
             updateCampaign({ isGenerating: false, generatedPosts: posts });
-        }, 3000);
-    }, [updateCampaign]);
+        }
+    }, [updateCampaign, state.designTheme, state.moodPreset, selectedPlatforms]);
 
     const handleDownload = useCallback((imgUrl: string, name: string) => {
         const canvas = document.createElement('canvas');

@@ -38,18 +38,68 @@ export default function VoiceOver() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [playingHistory, setPlayingHistory] = useState<number | null>(null);
 
-    const handleGenerate = useCallback(() => {
+    const handleGenerate = useCallback(async () => {
         updateVoiceOver({ isGenerating: true });
-        setTimeout(() => {
-            const audioUrl = 'simulated-audio-url';
-            const timestamp = new Date().toLocaleTimeString();
-            updateVoiceOver({
-                isGenerating: false,
-                generatedAudioUrl: audioUrl,
-                audioHistory: [{ url: audioUrl, voice: state.selectedVoice, timestamp }, ...state.audioHistory],
+        try {
+            // Map voice names to Google TTS voices
+            const voiceMap: Record<string, { name: string; lang: string }> = {
+                'Kore': { name: 'ar-XA-Standard-A', lang: 'ar-XA' },
+                'Puck': { name: 'ar-XA-Standard-B', lang: 'ar-XA' },
+                'Fenrir': { name: 'ar-XA-Standard-C', lang: 'ar-XA' },
+                'Leda': { name: 'ar-XA-Standard-D', lang: 'ar-XA' },
+                'Orus': { name: 'en-US-Standard-D', lang: 'en-US' },
+                'Zephyr': { name: 'en-US-Standard-A', lang: 'en-US' },
+            };
+
+            const selectedVoiceConfig = voiceMap[state.selectedVoice] || voiceMap['Kore'];
+
+            const res = await fetch('/api/generate-voice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: state.script,
+                    voice: selectedVoiceConfig.name,
+                    language: selectedVoiceConfig.lang,
+                    speed: 1.0,
+                }),
             });
-        }, 2500);
-    }, [updateVoiceOver, state.selectedVoice, state.audioHistory]);
+
+            const data = await res.json();
+
+            if (data.audioUrl) {
+                const timestamp = new Date().toLocaleTimeString();
+                updateVoiceOver({
+                    isGenerating: false,
+                    generatedAudioUrl: data.audioUrl,
+                    audioHistory: [{ url: data.audioUrl, voice: state.selectedVoice, timestamp }, ...state.audioHistory],
+                });
+            } else if (data.useBrowserTTS) {
+                // Fallback: use browser's SpeechSynthesis
+                const utterance = new SpeechSynthesisUtterance(state.script);
+                utterance.lang = selectedVoiceConfig.lang.substring(0, 2) === 'ar' ? 'ar' : 'en';
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+
+                const timestamp = new Date().toLocaleTimeString();
+                updateVoiceOver({
+                    isGenerating: false,
+                    generatedAudioUrl: 'browser-tts',
+                    audioHistory: [{ url: 'browser-tts', voice: state.selectedVoice, timestamp }, ...state.audioHistory],
+                });
+            } else {
+                throw new Error('No audio generated');
+            }
+        } catch (error) {
+            console.error('Voice generation error:', error);
+            // Final fallback: browser TTS
+            try {
+                const utterance = new SpeechSynthesisUtterance(state.script);
+                utterance.lang = 'ar';
+                window.speechSynthesis.speak(utterance);
+            } catch { /* ignore */ }
+            updateVoiceOver({ isGenerating: false, generatedAudioUrl: '' });
+        }
+    }, [updateVoiceOver, state.script, state.selectedVoice, state.audioHistory]);
 
     const waveBars = useMemo(() => {
         return Array.from({ length: 60 }, () => Math.random() * 40 + 10);

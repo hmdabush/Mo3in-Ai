@@ -14,12 +14,19 @@ import Campaign from '@/components/tools/Campaign';
 import PromptEngineer from '@/components/tools/PromptEngineer';
 import VoiceOver from '@/components/tools/VoiceOver';
 import VideoStudio from '@/components/tools/VideoStudio';
+import WebBuilder from '@/components/tools/WebBuilder';
+import SocialPublisher from '@/components/tools/SocialPublisher';
+import Dashboard from '@/components/tools/Dashboard';
+import Analytics from '@/components/tools/Analytics';
+import Templates from '@/components/tools/Templates';
+import BrandKit from '@/components/tools/BrandKit';
 
 export default function AppShell() {
     const activeTool = useAppStore((s) => s.activeTool);
 
     const renderTool = () => {
         switch (activeTool) {
+            case 'dashboard': return <Dashboard />;
             case 'creator-studio': return <CreatorStudio />;
             case 'storyboard': return <Storyboard />;
             case 'marketing': return <Marketing />;
@@ -30,7 +37,12 @@ export default function AppShell() {
             case 'prompt': return <PromptEngineer />;
             case 'voiceover': return <VoiceOver />;
             case 'video-studio': return <VideoStudio />;
-            default: return <CreatorStudio />;
+            case 'web-builder': return <WebBuilder />;
+            case 'social-publisher': return <SocialPublisher />;
+            case 'analytics': return <Analytics />;
+            case 'templates': return <Templates />;
+            case 'brand-kit': return <BrandKit />;
+            default: return <Dashboard />;
         }
     };
 
