@@ -191,8 +191,8 @@ export default function TopNav() {
                 )}
               </div>
               <div className={styles.userDivider} />
-              <button className={styles.userMenuItem}>
-                <Settings size={14} /> الإعدادات
+              <button className={styles.userMenuItem} onClick={() => { setShowPricing(true); setShowUserMenu(false); }}>
+                <Settings size={14} /> إدارة الاشتراك
               </button>
               <button className={`${styles.userMenuItem} ${styles.logoutBtn}`} onClick={() => signOut()}>
                 <LogOut size={14} /> تسجيل الخروج

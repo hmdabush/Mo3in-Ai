@@ -8,6 +8,7 @@ import {
     Target, Zap, Loader2, Copy, Check, Hash, Calendar, DollarSign,
     BarChart3, RotateCcw, Eye, TrendingUp,
 } from 'lucide-react';
+import ToolGuide from '@/components/shared/ToolGuide';
 import styles from './Plan.module.css';
 
 const MARKET_OPTIONS = [
@@ -143,6 +144,18 @@ export default function Plan() {
                         <div><h2>Plan</h2><p className={styles.subtitle}>مخطط الحملات الاستراتيجية</p></div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="مخطط الحملات"
+                    description="خطط لحملاتك التسويقية على السوشيال ميديا. أنشئ جدول نشر متكامل مع محتوى مخصص لكل منصة."
+                    steps={[
+                        'أدخل وصف المنتج أو الخدمة',
+                        'اختر السوق المستهدف واللغة والأسلوب',
+                        'حدد عدد المنشورات المطلوبة',
+                        'اضغط "Generate Plan" لإنشاء خطة النشر',
+                    ]}
+                />
+
                 <div className={styles.sidebarContent}>
                     <ImageUploader label="Product Reference" image={state.productReference}
                         onUpload={(file, url) => updatePlan({ productReference: { id: crypto.randomUUID(), file, url, name: file.name } })}

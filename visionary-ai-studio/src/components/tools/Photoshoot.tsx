@@ -7,6 +7,7 @@ import {
     Camera, Zap, Loader2, Download, Eye, X, Sun, Lightbulb,
     RotateCcw, Heart, Sparkles, LayoutGrid, List,
 } from 'lucide-react';
+import ToolGuide from '@/components/shared/ToolGuide';
 import styles from './Photoshoot.module.css';
 
 const SHOT_TYPES = [
@@ -143,6 +144,17 @@ export default function Photoshoot() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="جلسة التصوير"
+                    description="أنشئ صور تصوير منتجات احترافية بإعدادات استوديو متقدمة. اختر زاوية التصوير والإضاءة والخلفية."
+                    steps={[
+                        'ارفع صورة المنتج الأساسية',
+                        'اختر نوع اللقطة والإضاءة والخلفية',
+                        'حدد عدد الصور المطلوبة',
+                        'اضغط "Generate" لبدء جلسة التصوير',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     <ImageUploader

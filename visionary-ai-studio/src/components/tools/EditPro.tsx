@@ -7,6 +7,7 @@ import {
     Image as ImageIcon, Droplets, Contrast,
 } from 'lucide-react';
 import styles from './EditPro.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 interface SlotImage { id: string; url: string; name: string; }
 interface TextOverlay { id: string; text: string; x: number; y: number; fontSize: number; color: string; }
@@ -182,6 +183,17 @@ export default function EditPro() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="التحرير المتقدم"
+                    description="حرر صورك باحترافية مع فلاتر وأدوات تعديل متقدمة. تحكم في السطوع والتباين والألوان والمزيد."
+                    steps={[
+                        'ارفع الصورة المراد تحريرها',
+                        'اختر الفلتر المناسب من المجموعة',
+                        'عدّل الإعدادات (سطوع، تباين، تشبع...)',
+                        'احفظ أو حمّل الصورة المعدلة',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     {/* Image Slots */}

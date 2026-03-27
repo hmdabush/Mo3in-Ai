@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Brush, Plus, Copy, Check, Type, Palette, Image, Save, Trash2, Edit3 } from 'lucide-react';
 import styles from './BrandKit.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const DEFAULT_COLORS = [
     { name: 'أساسي', hex: '#06B6D4' },
@@ -61,6 +62,17 @@ export default function BrandKit() {
                 </div>
                 <button className={styles.saveBtn}><Save size={14} /> حفظ التغييرات</button>
             </div>
+
+            <ToolGuide
+                    title="هوية العلامة"
+                    description="أنشئ واحفظ هوية علامتك التجارية. حدد الألوان والخطوط والشعار لتطبيقها تلقائياً على جميع تصاميمك."
+                    steps={[
+                        'أضف ألوان علامتك التجارية',
+                        'اختر الخطوط المناسبة لهويتك',
+                        'ارفع شعار العلامة التجارية',
+                        'احفظ الهوية لاستخدامها في باقي الأدوات',
+                    ]}
+                />
 
             <div className={styles.content}>
                 {/* Brand Identity */}

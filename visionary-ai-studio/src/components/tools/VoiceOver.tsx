@@ -8,6 +8,7 @@ import {
     Volume2, Clock, Globe,
 } from 'lucide-react';
 import styles from './VoiceOver.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const VOICES = [
     { id: 'Kore', name: 'Kore', desc: 'Warm, Professional' },
@@ -123,6 +124,18 @@ export default function VoiceOver() {
                         <div><h2>Voice Over</h2><p className={styles.subtitle}>التعليق الصوتي</p></div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="التعليق الصوتي"
+                    description="حوّل النصوص إلى تعليق صوتي احترافي بأصوات متعددة. اكتب النص واختر الصوت المناسب."
+                    steps={[
+                        'اكتب النص الذي تريد تحويله إلى صوت',
+                        'اختر الصوت المناسب من القائمة',
+                        'عدّل السرعة والنبرة حسب رغبتك',
+                        'اضغط "Generate" لإنشاء التعليق الصوتي',
+                    ]}
+                />
+
                 <div className={styles.sidebarContent}>
                     <div>
                         <label className="label">Script</label>

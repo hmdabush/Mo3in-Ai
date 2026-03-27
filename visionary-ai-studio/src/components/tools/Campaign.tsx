@@ -8,6 +8,7 @@ import {
     Instagram, Facebook, Twitter,
 } from 'lucide-react';
 import styles from './Campaign.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const MOODS = [
     { value: 'original', label: 'Original', color: '#06B6D4' },
@@ -104,6 +105,18 @@ export default function Campaign() {
                         <div><h2>Campaign</h2><p className={styles.subtitle}>حملات السوشيال ميديا</p></div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="حملات السوشيال"
+                    description="أنشئ حملة إعلانية متكاملة من 6 بوستات متناسقة تغطي جميع مراحل قمع التسويق من الوعي إلى التحويل."
+                    steps={[
+                        'ارفع صورة المنتج واكتب وصف الحملة',
+                        'اختر المنصة والمود (الطابع البصري)',
+                        'اضغط "Generate Campaign" لإنشاء 6 بوستات',
+                        'راجع وحمّل البوستات المناسبة',
+                    ]}
+                />
+
                 <div className={styles.sidebarContent}>
                     <ImageUploader label="Product Reference" image={state.productRef}
                         onUpload={(file, url) => updateCampaign({ productRef: { id: crypto.randomUUID(), file, url, name: file.name } })}

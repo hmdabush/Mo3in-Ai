@@ -9,6 +9,7 @@ import {
     Download, RotateCcw, Sparkles,
 } from 'lucide-react';
 import styles from './VideoStudio.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const CAMERA_MOVES = [
     { value: 'pan', label: 'Pan' },
@@ -176,6 +177,17 @@ export default function VideoStudio() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="استوديو الفيديو"
+                    description="أنشئ فيديوهات إعلانية سينمائية بالذكاء الاصطناعي. ارفع صورتين (البداية والنهاية) وسيقوم AI بإنشاء فيديو متحرك بينهما."
+                    steps={[
+                        'ارفع صورة الإطار الأول (البداية)',
+                        'ارفع صورة الإطار الأخير (النهاية) - اختياري',
+                        'اختر حركة الكاميرا والمؤثرات والمدة',
+                        'اضغط "Generate Video" لإنشاء الفيديو',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     {/* Dual Frame Upload */}

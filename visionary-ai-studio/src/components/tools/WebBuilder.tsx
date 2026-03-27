@@ -9,6 +9,7 @@ import {
     ExternalLink, Copy, Check, Sparkles,
 } from 'lucide-react';
 import styles from './WebBuilder.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 // Site type options
 const SITE_TYPES = [
@@ -319,6 +320,17 @@ export default function WebBuilder() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="مُعين المواقع"
+                    description="ابنِ موقع ويب كامل ومتجاوب في ثوانٍ باستخدام الذكاء الاصطناعي. اختر نوع الموقع وخصصه حسب احتياجاتك."
+                    steps={[
+                        'اختر نوع الموقع (صفحة هبوط، متجر، مدونة...)',
+                        'اكتب وصف الموقع واختر الألوان والتصميم',
+                        'اختر الصفحات المطلوبة واللغة',
+                        'اضغط "Build Website" لإنشاء الموقع',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     {/* Site Name */}

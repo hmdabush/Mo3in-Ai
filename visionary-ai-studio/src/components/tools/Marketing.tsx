@@ -17,6 +17,7 @@ import {
     Target, Award, Eye, Star, Clock, DollarSign, TrendingDown,
     ArrowUpRight, BarChart2, PieChart, Activity, Layers,
 } from 'lucide-react';
+import ToolGuide from '@/components/shared/ToolGuide';
 import styles from './Marketing.module.css';
 
 const INDUSTRY_OPTIONS = [
@@ -1078,6 +1079,17 @@ Make the analysis specific to the ${state.industry} industry and ${state.brandNa
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="المحرك الاستراتيجي"
+                    description="أنشئ خطط واستراتيجيات تسويقية متكاملة بالذكاء الاصطناعي. يشمل كتابة المحتوى، خطط السوشيال، تحليل المنافسين والمزيد."
+                    steps={[
+                        'اختر القسم المناسب (استراتيجية، محتوى، إعلانات...)',
+                        'أدخل معلومات منتجك أو خدمتك',
+                        'حدد الجمهور المستهدف واللغة',
+                        'اضغط "Generate" للحصول على خطة متكاملة',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     <div className={styles.sectionNav}>

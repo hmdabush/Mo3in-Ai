@@ -9,6 +9,7 @@ import {
     Heart, Star, Copy, Check, Image, Grid3X3, DownloadCloud, X,
 } from 'lucide-react';
 import styles from './CreatorStudio.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const DUMMY_IMAGES = [
     'https://picsum.photos/seed/vis1/400/400',
@@ -178,6 +179,17 @@ export default function CreatorStudio() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="استوديو الإبداع"
+                    description="أنشئ صور إبداعية احترافية لمنتجاتك باستخدام الذكاء الاصطناعي. ارفع صورة منتجك واختر الإعدادات المناسبة."
+                    steps={[
+                        'ارفع صورة المنتج الأساسية',
+                        'اختر الإضاءة والزاوية والخلفية المناسبة',
+                        'اكتب وصف إضافي إن أردت (اختياري)',
+                        'اضغط "Generate" لإنشاء التصاميم',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     <ImageUploader

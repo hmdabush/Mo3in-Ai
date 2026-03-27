@@ -8,7 +8,9 @@
       "Bash(find 'C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio/src' -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.css \\\\\\))",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3099)",
       "Bash(curl -s http://localhost:3099)",
-      "Bash(curl -s http://localhost:3000)"
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(xxd \"C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools\\\\Dashboard.tsx\")",
+      "Bash(find 'C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools' -type f -name *.tsx)"
     ]
   }
 }

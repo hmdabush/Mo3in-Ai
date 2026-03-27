@@ -10,6 +10,7 @@ import {
     AlertCircle, ChevronRight, Sparkles, RotateCcw,
 } from 'lucide-react';
 import styles from './SocialPublisher.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const PLATFORMS = [
     { value: 'instagram', label: 'Instagram', icon: '📸', color: '#E4405F', bgColor: 'rgba(228, 64, 95, 0.1)' },
@@ -112,6 +113,17 @@ export default function SocialPublisher() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="النشر المباشر"
+                    description="جهّز منشوراتك للنشر على منصات التواصل الاجتماعي. أضف النص والهاشتاقات واختر أفضل وقت للنشر."
+                    steps={[
+                        'اكتب نص المنشور',
+                        'أضف الهاشتاقات المناسبة',
+                        'اختر المنصة ووقت النشر المثالي',
+                        'اضغط "Schedule" لجدولة المنشور',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     {/* Connected Accounts */}

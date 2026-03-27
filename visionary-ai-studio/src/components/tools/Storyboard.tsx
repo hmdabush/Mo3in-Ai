@@ -8,6 +8,7 @@ import {
     Film, Zap, Loader2, Monitor, Smartphone, Download, LayoutGrid,
     Clock, ArrowRight, Clapperboard, Type, RotateCcw, Eye, X,
 } from 'lucide-react';
+import ToolGuide from '@/components/shared/ToolGuide';
 import styles from './Storyboard.module.css';
 
 const SCENE_TITLES = [
@@ -122,6 +123,17 @@ export default function Storyboard() {
                         </div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="اللوحة السينمائية"
+                    description="أنشئ لوحة سينمائية (Storyboard) كاملة لإعلانك المرئي. حدد المشاهد والتوقيت وسيقوم AI بإنشاء صور لكل مشهد."
+                    steps={[
+                        'ارفع صورة المنتج واكتب وصف الإعلان',
+                        'اختر نوع الإعلان والمدة والمنصة',
+                        'اضغط "Generate Storyboard" لإنشاء المشاهد',
+                        'راجع المشاهد وحمّل اللوحة كاملة',
+                    ]}
+                />
 
                 <div className={styles.sidebarContent}>
                     <div>

@@ -7,6 +7,7 @@ import {
     X, ExternalLink, Copy, Check, Filter, Heart,
 } from 'lucide-react';
 import styles from './Templates.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const CATEGORIES = ['الكل', 'سوشيال ميديا', 'إعلانات', 'بطاقات أعمال', 'قوائم طعام', 'عروض تقديمية', 'قصص'];
 
@@ -83,6 +84,17 @@ export default function Templates() {
                     <span className={styles.resultCount}>{filtered.length} قالب</span>
                 </div>
             </div>
+
+            <ToolGuide
+                    title="مكتبة القوالب"
+                    description="تصفح مكتبة القوالب الجاهزة واستخدمها كنقطة انطلاق لتصاميمك. قوالب متنوعة لجميع المنصات والأغراض."
+                    steps={[
+                        'تصفح القوالب المتاحة حسب الفئة',
+                        'اختر القالب المناسب لمشروعك',
+                        'خصص القالب حسب احتياجاتك',
+                        'احفظ التصميم أو انقله لأداة أخرى',
+                    ]}
+                />
 
             <div className={styles.categories}>
                 {CATEGORIES.map(cat => (

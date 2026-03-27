@@ -7,6 +7,7 @@ import {
     Zap, Clock, Filter, Download,
 } from 'lucide-react';
 import styles from './Analytics.module.css';
+import ToolGuide from '@/components/shared/ToolGuide';
 
 const OVERVIEW_STATS = [
     { label: 'إجمالي المشاهدات', value: '24,892', rawValue: 24892, change: '+18%', up: true, icon: Eye, color: '#06B6D4' },
@@ -81,6 +82,17 @@ export default function Analytics() {
                     </button>
                 </div>
             </div>
+
+            <ToolGuide
+                    title="التحليلات"
+                    description="تابع أداء محتواك وحملاتك التسويقية. اطلع على إحصائيات المشاهدات والتفاعل والنمو عبر جميع المنصات."
+                    steps={[
+                        'راجع الإحصائيات العامة في لوحة التحكم',
+                        'تابع أداء كل منصة على حدة',
+                        'حلل البيانات الأسبوعية والشهرية',
+                        'استخدم التوصيات لتحسين استراتيجيتك',
+                    ]}
+                />
 
             <div className={styles.content}>
                 {/* Overview Stats */}

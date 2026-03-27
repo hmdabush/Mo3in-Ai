@@ -8,6 +8,7 @@ import {
     Wand2, Zap, Loader2, Copy, Check, BookOpen, Palette,
     RefreshCw, Sparkles, RotateCcw,
 } from 'lucide-react';
+import ToolGuide from '@/components/shared/ToolGuide';
 import styles from './PromptEngineer.module.css';
 
 const PROMPT_TEMPLATES = [
@@ -170,6 +171,18 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
                         <div><h2>Prompt Engineer</h2><p className={styles.subtitle}>هندسة الأوامر</p></div>
                     </div>
                 </div>
+
+                <ToolGuide
+                    title="هندسة الأوامر"
+                    description="أداة متخصصة لكتابة أوامر (Prompts) احترافية لنماذج الذكاء الاصطناعي. تساعدك في الحصول على أفضل نتائج ممكنة."
+                    steps={[
+                        'اختر نوع القالب (منتج، طعام، أزياء...)',
+                        'ارفع صورة مرجعية (اختياري)',
+                        'اختر النمط الفني والموديل المستهدف',
+                        'اضغط "Generate Prompt" للحصول على أمر احترافي',
+                    ]}
+                />
+
                 <div className={styles.sidebarContent}>
                     <ImageUploader label="Reference Image" image={state.referenceImage}
                         onUpload={(file, url) => updatePrompt({ referenceImage: { id: crypto.randomUUID(), file, url, name: file.name } })}
