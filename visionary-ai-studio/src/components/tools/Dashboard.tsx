@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore, TOOLS, TOOL_CATEGORIES, ToolId } from '@/store/useAppStore';
 import { useSubscription } from '@/lib/SubscriptionContext';
+import PricingModal from '@/components/subscription/PricingModal';
 import {
     Sparkles, TrendingUp, Zap, Crown, ArrowRight,
     Image, Video, Globe, Send, BarChart3, Mic,
@@ -37,6 +38,7 @@ export default function Dashboard() {
     const { setActiveTool, projects } = useAppStore();
     const { plan, credits } = useSubscription();
     const [mounted, setMounted] = useState(false);
+    const [showPricing, setShowPricing] = useState(false);
 
     useEffect(() => setMounted(true), []);
 
@@ -67,8 +69,8 @@ export default function Dashboard() {
                     <div className={styles.greeting}>
                         <span className={styles.greetingEmoji}>{getGreetingEmoji()}</span>
                         <div>
-                            <h1>{getGreeting()}</h1>
-                            <p>ماذا ستبتكر اليوم؟</p>
+                            <span style={{ fontSize: '16px', fontWeight: 600, color: '#e2e8f0' }}>{getGreeting()}</span>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>ماذا ستبتكر اليوم؟</p>
                         </div>
                     </div>
                 </div>
@@ -200,7 +202,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                         {plan === 'free' && (
-                            <button className={styles.upgradeBtn} onClick={() => setActiveTool('dashboard' as ToolId)}>
+                            <button className={styles.upgradeBtn} onClick={() => setShowPricing(true)}>
                                 <Crown size={14} />
                                 <span>ترقية للخطة الاحترافية</span>
                                 <ArrowRight size={14} />
@@ -209,6 +211,9 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Pricing Modal */}
+            <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
         </div>
     );
 }

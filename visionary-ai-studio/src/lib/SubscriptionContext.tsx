@@ -84,7 +84,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, [fetchSubscription]);
 
   const checkout = async (planId: PlanId) => {
-    if (!user) return;
+    if (!user) {
+      console.error('Checkout: No user logged in');
+      return;
+    }
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -92,9 +95,20 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         body: JSON.stringify({ planId, userId: user.id, userEmail: user.email }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (!res.ok) {
+        console.error('Checkout API error:', data);
+        alert('حدث خطأ أثناء إنشاء جلسة الدفع: ' + (data.error || 'خطأ غير معروف'));
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Checkout: No URL returned', data);
+        alert('لم يتم إرجاع رابط الدفع. يرجى المحاولة مرة أخرى.');
+      }
     } catch (error) {
       console.error('Checkout error:', error);
+      alert('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
     }
   };
 
