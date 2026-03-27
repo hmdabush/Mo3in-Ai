@@ -97,7 +97,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       const data = await res.json();
       if (!res.ok) {
         console.error('Checkout API error:', data);
-        alert('حدث خطأ أثناء إنشاء جلسة الدفع: ' + (data.error || 'خطأ غير معروف'));
+        alert('حدث خطأ أثناء إنشاء جلسة الدفع: ' + (data.details || data.error || 'خطأ غير معروف'));
         return;
       }
       if (data.url) {
