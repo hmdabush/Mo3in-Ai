@@ -10,7 +10,8 @@
       "Bash(curl -s http://localhost:3099)",
       "Bash(curl -s http://localhost:3000)",
       "Bash(xxd \"C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools\\\\Dashboard.tsx\")",
-      "Bash(find 'C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools' -type f -name *.tsx)"
+      "Bash(find 'C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools' -type f -name *.tsx)",
+      "Bash(node -e \"const s = require\\(''stripe''\\); console.log\\(s.DEFAULT_API_VERSION || ''check types''\\)\")"
     ]
   }
 }

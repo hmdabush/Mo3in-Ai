@@ -9,6 +9,13 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify Stripe key exists
+    const stripeKey = (process.env.STRIPE_SECRET_KEY || '').trim();
+    if (!stripeKey || !stripeKey.startsWith('sk_')) {
+      console.error('Invalid STRIPE_SECRET_KEY:', stripeKey ? `starts with ${stripeKey.substring(0, 7)}...` : 'EMPTY');
+      return NextResponse.json({ error: 'Stripe configuration error', details: 'Invalid Stripe secret key' }, { status: 500 });
+    }
+
     const body = await request.json();
     const { planId, userId, userEmail } = body as {
       planId: PlanId;
@@ -22,8 +29,11 @@ export async function POST(request: NextRequest) {
 
     const plan = SERVER_PLANS[planId];
     if (!plan || !plan.priceId) {
-      return NextResponse.json({ error: 'Invalid plan or free plan selected' }, { status: 400 });
+      console.error('Plan issue:', { planId, priceId: plan?.priceId, envPro: process.env.STRIPE_PRO_PRICE_ID?.substring(0, 10), envEnt: process.env.STRIPE_ENTERPRISE_PRICE_ID?.substring(0, 10) });
+      return NextResponse.json({ error: 'Invalid plan or missing price ID', details: `Plan: ${planId}, PriceId: ${plan?.priceId || 'null'}` }, { status: 400 });
     }
+
+    console.log('Creating checkout for:', { planId, priceId: plan.priceId, userId: userId.substring(0, 8) });
 
     // Check if user already has a Stripe customer ID
     const { data: profile } = await supabaseAdmin
@@ -36,11 +46,13 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe customer if not exists
     if (!customerId) {
+      console.log('Creating new Stripe customer...');
       const customer = await stripe.customers.create({
         email: userEmail,
         metadata: { supabase_user_id: userId },
       });
       customerId = customer.id;
+      console.log('Customer created:', customerId);
 
       // Save customer ID to Supabase
       await supabaseAdmin
@@ -53,6 +65,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create checkout session
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://mo3inai.com';
+    console.log('Creating checkout session with origin:', origin);
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
@@ -63,8 +78,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL}?subscription=success`,
-      cancel_url: `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL}?subscription=cancelled`,
+      success_url: `${origin}?subscription=success`,
+      cancel_url: `${origin}?subscription=cancelled`,
       metadata: {
         supabase_user_id: userId,
         plan_id: planId,
@@ -77,12 +92,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Checkout session created:', session.id);
     return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : String(error);
-    console.error('Checkout error:', errMsg, error);
+    const errType = error instanceof Error ? error.constructor.name : 'Unknown';
+    console.error('Checkout error type:', errType, 'message:', errMsg);
     return NextResponse.json(
-      { error: 'Failed to create checkout session', details: errMsg },
+      { error: 'Failed to create checkout session', details: `[${errType}] ${errMsg}` },
       { status: 500 }
     );
   }

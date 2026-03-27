@@ -1,8 +1,12 @@
 import Stripe from 'stripe';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripeKey = (process.env.STRIPE_SECRET_KEY || '').trim();
+
+export const stripe = new Stripe(stripeKey, {
   apiVersion: '2026-02-25.clover',
   typescript: true,
+  timeout: 30000,
+  maxNetworkRetries: 3,
 });
 
 /** Server-side plan config with Stripe price IDs */
