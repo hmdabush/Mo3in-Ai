@@ -17,7 +17,7 @@ import {
     Target, Award, Eye, Star, Clock, DollarSign, TrendingDown,
     ArrowUpRight, BarChart2, PieChart, Activity, Layers,
 } from 'lucide-react';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 import styles from './Marketing.module.css';
 
 const INDUSTRY_OPTIONS = [
@@ -1068,30 +1068,13 @@ Make the analysis specific to the ${state.industry} industry and ${state.brandNa
     };
 
     return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <BarChart3 size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Marketing Engine</h2>
-                            <p className={styles.subtitle}>المحرك الاستراتيجي</p>
-                        </div>
-                    </div>
-                </div>
-
-                <ToolGuide
-                    title="المحرك الاستراتيجي"
-                    description="أنشئ خطط واستراتيجيات تسويقية متكاملة بالذكاء الاصطناعي. يشمل كتابة المحتوى، خطط السوشيال، تحليل المنافسين والمزيد."
-                    steps={[
-                        'اختر القسم المناسب (استراتيجية، محتوى، إعلانات...)',
-                        'أدخل معلومات منتجك أو خدمتك',
-                        'حدد الجمهور المستهدف واللغة',
-                        'اضغط "Generate" للحصول على خطة متكاملة',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
+        <ToolLayout
+            icon={<BarChart3 size={18} />}
+            title="Marketing Engine"
+            titleAr="المحرك الاستراتيجي"
+            description="حلل علامتك التجارية وأنشئ استراتيجية تسويقية شاملة. أدخل بيانات مشروعك واحصل على تقرير متكامل."
+            output={renderSectionContent()}
+        >
                     <div className={styles.sectionNav}>
                         <label className="label">Marketing Tools</label>
                         <div className={styles.sectionList}>
@@ -1173,12 +1156,6 @@ Make the analysis specific to the ${state.industry} industry and ${state.brandNa
                             </button>
                         </>
                     )}
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
-                {renderSectionContent()}
-            </main>
-        </div>
+        </ToolLayout>
     );
 }

@@ -9,7 +9,7 @@ import {
     ExternalLink, Copy, Check, Sparkles,
 } from 'lucide-react';
 import styles from './WebBuilder.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 // Site type options
 const SITE_TYPES = [
@@ -308,349 +308,332 @@ export default function WebBuilder() {
 
     const canGenerate = state.siteName.trim() !== '' && state.siteDescription.trim() !== '';
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Globe size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Website Builder</h2>
-                            <p className={styles.subtitle}>مُعين المواقع</p>
-                        </div>
+    const outputContent = (
+        <>
+            {state.isGenerating ? (
+                /* Loading State */
+                <div className={styles.loading}>
+                    <div className={styles.loadingSpinner}>
+                        <div className={styles.loadingRing} />
+                        <div className={styles.loadingRing2} />
+                        <Globe size={28} className={styles.loadingIcon} />
+                    </div>
+                    <h3>Claude Opus يبني موقعك...</h3>
+                    <p>الذكاء الاصطناعي يعمل على تصميم وبرمجة موقعك بالكامل بناءً على متطلباتك</p>
+                    <div className={styles.loadingSteps}>
+                        {LOADING_STEPS.map((step, i) => (
+                            <div
+                                key={i}
+                                className={`${styles.loadingStep} ${
+                                    i === loadingStep ? styles.loadingStepActive :
+                                    i < loadingStep ? styles.loadingStepDone : ''
+                                }`}
+                            >
+                                <span className={`${styles.loadingStepIcon} ${
+                                    i === loadingStep ? styles.loadingStepIconActive :
+                                    i < loadingStep ? styles.loadingStepIconDone : ''
+                                }`}>
+                                    {i < loadingStep ? <Check size={10} /> :
+                                     i === loadingStep ? <Loader2 size={10} className={styles.spin} /> :
+                                     (i + 1)}
+                                </span>
+                                {step.label}
+                            </div>
+                        ))}
                     </div>
                 </div>
-
-                <ToolGuide
-                    title="مُعين المواقع"
-                    description="ابنِ موقع ويب كامل ومتجاوب في ثوانٍ باستخدام الذكاء الاصطناعي. اختر نوع الموقع وخصصه حسب احتياجاتك."
-                    steps={[
-                        'اختر نوع الموقع (صفحة هبوط، متجر، مدونة...)',
-                        'اكتب وصف الموقع واختر الألوان والتصميم',
-                        'اختر الصفحات المطلوبة واللغة',
-                        'اضغط "Build Website" لإنشاء الموقع',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    {/* Site Name */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Site Name / اسم الموقع</label>
-                        <input
-                            className="input-field"
-                            placeholder="مثل: شركة الإبداع الرقمي"
-                            value={state.siteName}
-                            onChange={(e) => updateWebBuilder({ siteName: e.target.value })}
-                        />
+            ) : error ? (
+                /* Error State */
+                <div className={styles.empty}>
+                    <div className={styles.emptyIcon} style={{ borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.08)' }}>
+                        <Globe size={48} style={{ color: '#EF4444' }} />
                     </div>
-
-                    {/* Site Type */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Site Type / نوع الموقع</label>
-                        <div className={styles.siteTypeGrid}>
-                            {SITE_TYPES.map((type) => (
-                                <button
-                                    key={type.value}
-                                    className={`${styles.siteTypeBtn} ${state.siteType === type.value ? styles.siteTypeBtnActive : ''}`}
-                                    onClick={() => updateWebBuilder({ siteType: type.value })}
-                                >
-                                    <span className={styles.siteTypeIcon}>{type.icon}</span>
-                                    <span>{type.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Description / وصف المشروع</label>
-                        <textarea
-                            className="input-field"
-                            rows={3}
-                            placeholder="وصف مختصر عن الموقع ونشاطه... مثل: شركة تصميم مواقع وتطبيقات في السعودية"
-                            value={state.siteDescription}
-                            onChange={(e) => updateWebBuilder({ siteDescription: e.target.value })}
-                            style={{ resize: 'vertical', minHeight: '80px' }}
-                        />
-                    </div>
-
-                    {/* Color Palette */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Color Palette / لوحة الألوان</label>
-                        <div className={styles.paletteGrid}>
-                            {COLOR_PALETTES.map((palette) => (
-                                <button
-                                    key={palette.value}
-                                    className={`${styles.paletteBtn} ${state.colorPalette === palette.value ? styles.paletteBtnActive : ''}`}
-                                    onClick={() => updateWebBuilder({ colorPalette: palette.value })}
-                                >
-                                    <div className={styles.paletteSwatches}>
-                                        {palette.colors.map((color, i) => (
-                                            <span
-                                                key={i}
-                                                className={styles.paletteSwatch}
-                                                style={{ background: color }}
-                                            />
-                                        ))}
-                                    </div>
-                                    <span className={styles.paletteLabel}>{palette.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Design Style */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Design Style / نمط التصميم</label>
-                        <div className={styles.styleChips}>
-                            {DESIGN_STYLES.map((s) => (
-                                <button
-                                    key={s.value}
-                                    className={`${styles.styleChip} ${state.designStyle === s.value ? styles.styleChipActive : ''}`}
-                                    onClick={() => updateWebBuilder({ designStyle: s.value })}
-                                >
-                                    {s.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Pages */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">Sections / الأقسام</label>
-                        <div className={styles.pagesSection}>
-                            {PAGE_OPTIONS.map((page) => {
-                                const isActive = state.selectedPages.includes(page.value);
-                                return (
-                                    <div
-                                        key={page.value}
-                                        className={`${styles.pageItem} ${isActive ? styles.pageItemActive : ''}`}
-                                    >
-                                        <button
-                                            className={`${styles.pageCheck} ${isActive ? styles.pageCheckActive : ''}`}
-                                            onClick={() => togglePage(page.value)}
-                                        >
-                                            {isActive && <Check size={12} />}
-                                        </button>
-                                        <span className={styles.pageLabel}>{page.label}</span>
-                                        <span className={styles.pageLabelAr}>{page.labelAr}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* AI Badge */}
-                    <div style={{ textAlign: 'center' }}>
-                        <span className={styles.aiBadge}>
-                            <span className={styles.aiBadgeDot} />
-                            Powered by Claude Opus
-                        </span>
-                    </div>
-
-                    {/* Generate Button */}
+                    <h3 style={{ color: '#EF4444' }}>حدث خطأ</h3>
+                    <p>{error}</p>
                     <button
-                        className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
-                        onClick={handleGenerate}
-                        disabled={!canGenerate || state.isGenerating}
-                        id="webbuilder-generate-btn"
+                        className={styles.generateBtn}
+                        onClick={() => { setError(null); callGenerateApi(); }}
+                        style={{ maxWidth: '300px', marginTop: '12px' }}
                     >
-                        {state.isGenerating ? (
-                            <><Loader2 size={18} className={styles.spin} /> جاري البناء...</>
-                        ) : (
-                            <><Zap size={18} /> Build Website</>
-                        )}
+                        <RefreshCcw size={16} /> إعادة المحاولة
                     </button>
+                </div>
+            ) : state.generatedHtml ? (
+                /* Preview / Code View */
+                <>
+                    <div className={styles.previewToolbar}>
+                        <div className={styles.deviceToggles}>
+                            <button
+                                className={`${styles.deviceBtn} ${deviceView === 'desktop' ? styles.deviceBtnActive : ''}`}
+                                onClick={() => setDeviceView('desktop')}
+                            >
+                                <Monitor size={14} /> Desktop
+                            </button>
+                            <button
+                                className={`${styles.deviceBtn} ${deviceView === 'tablet' ? styles.deviceBtnActive : ''}`}
+                                onClick={() => setDeviceView('tablet')}
+                            >
+                                <Tablet size={14} /> Tablet
+                            </button>
+                            <button
+                                className={`${styles.deviceBtn} ${deviceView === 'mobile' ? styles.deviceBtnActive : ''}`}
+                                onClick={() => setDeviceView('mobile')}
+                            >
+                                <Smartphone size={14} /> Mobile
+                            </button>
+                        </div>
 
-                    {/* Bottom Actions */}
-                    {state.generatedHtml && (
-                        <div className={styles.bottomActions}>
-                            <button className={styles.resetBtn} onClick={handleReset}>
-                                <RotateCcw size={14} /> Reset
+                        <div className={styles.previewUrl}>
+                            <span className={styles.previewUrlDot} />
+                            <span className={styles.previewUrlText}>
+                                https://{state.siteName.replace(/\s+/g, '-').toLowerCase() || 'my-site'}.mo3in.ai
+                            </span>
+                        </div>
+
+                        <div className={styles.toolbarActions}>
+                            <button
+                                className={`${styles.toolbarBtn} ${showCode ? styles.codeToggleActive : ''}`}
+                                onClick={() => setShowCode(!showCode)}
+                            >
+                                {showCode ? <Eye size={14} /> : <Code size={14} />}
+                                {showCode ? 'Preview' : 'Code'}
                             </button>
-                            <button className={styles.exportBtn} onClick={handleExportHtml}>
-                                <Download size={14} /> Export HTML
+                            <button className={styles.toolbarBtn} onClick={handleCopyCode}>
+                                {copied ? <Check size={14} /> : <Copy size={14} />}
+                                {copied ? 'Copied!' : 'Copy'}
                             </button>
+                            <button className={styles.toolbarBtn} onClick={() => callGenerateApi()}>
+                                <RefreshCcw size={14} /> Regenerate
+                            </button>
+                        </div>
+                    </div>
+
+                    {showCode ? (
+                        /* Code Editor */
+                        <div className={styles.codeEditor}>
+                            <div className={styles.codeTabs}>
+                                <button
+                                    className={`${styles.codeTab} ${codeTab === 'html' ? styles.codeTabActive : ''}`}
+                                    onClick={() => setCodeTab('html')}
+                                >
+                                    <FileCode size={12} style={{ marginLeft: 4 }} /> index.html
+                                </button>
+                            </div>
+                            <div className={styles.codeContent}>
+                                <pre>{state.generatedHtml}</pre>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Preview Frame */
+                        <div className={styles.previewArea}>
+                            <div className={`${styles.previewFrame} ${
+                                deviceView === 'desktop' ? styles.previewFrameDesktop :
+                                deviceView === 'tablet' ? styles.previewFrameTablet :
+                                styles.previewFrameMobile
+                            }`}>
+                                <div className={styles.browserBar}>
+                                    <div className={styles.browserDots}>
+                                        <span className={`${styles.browserDot} ${styles.browserDotRed}`} />
+                                        <span className={`${styles.browserDot} ${styles.browserDotYellow}`} />
+                                        <span className={`${styles.browserDot} ${styles.browserDotGreen}`} />
+                                    </div>
+                                    <span className={styles.browserAddress}>
+                                        https://{state.siteName.replace(/\s+/g, '-').toLowerCase() || 'my-site'}.mo3in.ai
+                                    </span>
+                                </div>
+                                <iframe
+                                    ref={iframeRef}
+                                    className={styles.previewIframe}
+                                    title="Website Preview"
+                                    sandbox="allow-scripts"
+                                />
+                            </div>
                         </div>
                     )}
+                </>
+            ) : (
+                /* Empty State */
+                <div className={styles.empty}>
+                    <div className={styles.emptyIcon}>
+                        <Globe size={48} />
+                    </div>
+                    <h3>Website Builder</h3>
+                    <p>
+                        صمم وأنشئ موقعك الإلكتروني بالكامل باستخدام الذكاء الاصطناعي.
+                        <br />
+                        حدد نوع موقعك، اختر الألوان والنمط، واترك Claude Opus يبني لك موقع احترافي كامل
+                    </p>
+                    <div className={styles.steps}>
+                        <div className={styles.step}>
+                            <span className={styles.stepNum}>1</span>
+                            <span>أدخل اسم ووصف موقعك</span>
+                        </div>
+                        <div className={styles.step}>
+                            <span className={styles.stepNum}>2</span>
+                            <span>اختر نوع الموقع والألوان</span>
+                        </div>
+                        <div className={styles.step}>
+                            <span className={styles.stepNum}>3</span>
+                            <span>حدد الأقسام المطلوبة</span>
+                        </div>
+                        <div className={styles.step}>
+                            <span className={styles.stepNum}>4</span>
+                            <span>اضغط Build Website</span>
+                        </div>
+                    </div>
                 </div>
-            </aside>
+            )}
+        </>
+    );
 
-            <main className={styles.workspace}>
-                {state.isGenerating ? (
-                    /* Loading State */
-                    <div className={styles.loading}>
-                        <div className={styles.loadingSpinner}>
-                            <div className={styles.loadingRing} />
-                            <div className={styles.loadingRing2} />
-                            <Globe size={28} className={styles.loadingIcon} />
-                        </div>
-                        <h3>Claude Opus يبني موقعك...</h3>
-                        <p>الذكاء الاصطناعي يعمل على تصميم وبرمجة موقعك بالكامل بناءً على متطلباتك</p>
-                        <div className={styles.loadingSteps}>
-                            {LOADING_STEPS.map((step, i) => (
-                                <div
-                                    key={i}
-                                    className={`${styles.loadingStep} ${
-                                        i === loadingStep ? styles.loadingStepActive :
-                                        i < loadingStep ? styles.loadingStepDone : ''
-                                    }`}
-                                >
-                                    <span className={`${styles.loadingStepIcon} ${
-                                        i === loadingStep ? styles.loadingStepIconActive :
-                                        i < loadingStep ? styles.loadingStepIconDone : ''
-                                    }`}>
-                                        {i < loadingStep ? <Check size={10} /> :
-                                         i === loadingStep ? <Loader2 size={10} className={styles.spin} /> :
-                                         (i + 1)}
-                                    </span>
-                                    {step.label}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ) : error ? (
-                    /* Error State */
-                    <div className={styles.empty}>
-                        <div className={styles.emptyIcon} style={{ borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.08)' }}>
-                            <Globe size={48} style={{ color: '#EF4444' }} />
-                        </div>
-                        <h3 style={{ color: '#EF4444' }}>حدث خطأ</h3>
-                        <p>{error}</p>
+    return (
+        <ToolLayout
+            icon={<Globe size={18} />}
+            title="Website Builder"
+            titleAr="مُعين المواقع"
+            description="صمم وابني موقع إلكتروني كامل بالذكاء الاصطناعي. صف موقعك واحصل على كود جاهز للنشر."
+            output={outputContent}
+        >
+            {/* Site Name */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Site Name / اسم الموقع</label>
+                <input
+                    className="input-field"
+                    placeholder="مثل: شركة الإبداع الرقمي"
+                    value={state.siteName}
+                    onChange={(e) => updateWebBuilder({ siteName: e.target.value })}
+                />
+            </div>
+
+            {/* Site Type */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Site Type / نوع الموقع</label>
+                <div className={styles.siteTypeGrid}>
+                    {SITE_TYPES.map((type) => (
                         <button
-                            className={styles.generateBtn}
-                            onClick={() => { setError(null); callGenerateApi(); }}
-                            style={{ maxWidth: '300px', marginTop: '12px' }}
+                            key={type.value}
+                            className={`${styles.siteTypeBtn} ${state.siteType === type.value ? styles.siteTypeBtnActive : ''}`}
+                            onClick={() => updateWebBuilder({ siteType: type.value })}
                         >
-                            <RefreshCcw size={16} /> إعادة المحاولة
+                            <span className={styles.siteTypeIcon}>{type.icon}</span>
+                            <span>{type.label}</span>
                         </button>
-                    </div>
-                ) : state.generatedHtml ? (
-                    /* Preview / Code View */
-                    <>
-                        <div className={styles.previewToolbar}>
-                            <div className={styles.deviceToggles}>
-                                <button
-                                    className={`${styles.deviceBtn} ${deviceView === 'desktop' ? styles.deviceBtnActive : ''}`}
-                                    onClick={() => setDeviceView('desktop')}
-                                >
-                                    <Monitor size={14} /> Desktop
-                                </button>
-                                <button
-                                    className={`${styles.deviceBtn} ${deviceView === 'tablet' ? styles.deviceBtnActive : ''}`}
-                                    onClick={() => setDeviceView('tablet')}
-                                >
-                                    <Tablet size={14} /> Tablet
-                                </button>
-                                <button
-                                    className={`${styles.deviceBtn} ${deviceView === 'mobile' ? styles.deviceBtnActive : ''}`}
-                                    onClick={() => setDeviceView('mobile')}
-                                >
-                                    <Smartphone size={14} /> Mobile
-                                </button>
-                            </div>
+                    ))}
+                </div>
+            </div>
 
-                            <div className={styles.previewUrl}>
-                                <span className={styles.previewUrlDot} />
-                                <span className={styles.previewUrlText}>
-                                    https://{state.siteName.replace(/\s+/g, '-').toLowerCase() || 'my-site'}.mo3in.ai
-                                </span>
-                            </div>
+            {/* Description */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Description / وصف المشروع</label>
+                <textarea
+                    className="input-field"
+                    rows={3}
+                    placeholder="وصف مختصر عن الموقع ونشاطه... مثل: شركة تصميم مواقع وتطبيقات في السعودية"
+                    value={state.siteDescription}
+                    onChange={(e) => updateWebBuilder({ siteDescription: e.target.value })}
+                    style={{ resize: 'vertical', minHeight: '80px' }}
+                />
+            </div>
 
-                            <div className={styles.toolbarActions}>
-                                <button
-                                    className={`${styles.toolbarBtn} ${showCode ? styles.codeToggleActive : ''}`}
-                                    onClick={() => setShowCode(!showCode)}
-                                >
-                                    {showCode ? <Eye size={14} /> : <Code size={14} />}
-                                    {showCode ? 'Preview' : 'Code'}
-                                </button>
-                                <button className={styles.toolbarBtn} onClick={handleCopyCode}>
-                                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                                    {copied ? 'Copied!' : 'Copy'}
-                                </button>
-                                <button className={styles.toolbarBtn} onClick={() => callGenerateApi()}>
-                                    <RefreshCcw size={14} /> Regenerate
-                                </button>
-                            </div>
-                        </div>
-
-                        {showCode ? (
-                            /* Code Editor */
-                            <div className={styles.codeEditor}>
-                                <div className={styles.codeTabs}>
-                                    <button
-                                        className={`${styles.codeTab} ${codeTab === 'html' ? styles.codeTabActive : ''}`}
-                                        onClick={() => setCodeTab('html')}
-                                    >
-                                        <FileCode size={12} style={{ marginLeft: 4 }} /> index.html
-                                    </button>
-                                </div>
-                                <div className={styles.codeContent}>
-                                    <pre>{state.generatedHtml}</pre>
-                                </div>
-                            </div>
-                        ) : (
-                            /* Preview Frame */
-                            <div className={styles.previewArea}>
-                                <div className={`${styles.previewFrame} ${
-                                    deviceView === 'desktop' ? styles.previewFrameDesktop :
-                                    deviceView === 'tablet' ? styles.previewFrameTablet :
-                                    styles.previewFrameMobile
-                                }`}>
-                                    <div className={styles.browserBar}>
-                                        <div className={styles.browserDots}>
-                                            <span className={`${styles.browserDot} ${styles.browserDotRed}`} />
-                                            <span className={`${styles.browserDot} ${styles.browserDotYellow}`} />
-                                            <span className={`${styles.browserDot} ${styles.browserDotGreen}`} />
-                                        </div>
-                                        <span className={styles.browserAddress}>
-                                            https://{state.siteName.replace(/\s+/g, '-').toLowerCase() || 'my-site'}.mo3in.ai
-                                        </span>
-                                    </div>
-                                    <iframe
-                                        ref={iframeRef}
-                                        className={styles.previewIframe}
-                                        title="Website Preview"
-                                        sandbox="allow-scripts"
+            {/* Color Palette */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Color Palette / لوحة الألوان</label>
+                <div className={styles.paletteGrid}>
+                    {COLOR_PALETTES.map((palette) => (
+                        <button
+                            key={palette.value}
+                            className={`${styles.paletteBtn} ${state.colorPalette === palette.value ? styles.paletteBtnActive : ''}`}
+                            onClick={() => updateWebBuilder({ colorPalette: palette.value })}
+                        >
+                            <div className={styles.paletteSwatches}>
+                                {palette.colors.map((color, i) => (
+                                    <span
+                                        key={i}
+                                        className={styles.paletteSwatch}
+                                        style={{ background: color }}
                                     />
-                                </div>
+                                ))}
                             </div>
-                        )}
-                    </>
+                            <span className={styles.paletteLabel}>{palette.label}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Design Style */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Design Style / نمط التصميم</label>
+                <div className={styles.styleChips}>
+                    {DESIGN_STYLES.map((s) => (
+                        <button
+                            key={s.value}
+                            className={`${styles.styleChip} ${state.designStyle === s.value ? styles.styleChipActive : ''}`}
+                            onClick={() => updateWebBuilder({ designStyle: s.value })}
+                        >
+                            {s.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Pages */}
+            <div className={styles.sectionGroup}>
+                <label className="label">Sections / الأقسام</label>
+                <div className={styles.pagesSection}>
+                    {PAGE_OPTIONS.map((page) => {
+                        const isActive = state.selectedPages.includes(page.value);
+                        return (
+                            <div
+                                key={page.value}
+                                className={`${styles.pageItem} ${isActive ? styles.pageItemActive : ''}`}
+                            >
+                                <button
+                                    className={`${styles.pageCheck} ${isActive ? styles.pageCheckActive : ''}`}
+                                    onClick={() => togglePage(page.value)}
+                                >
+                                    {isActive && <Check size={12} />}
+                                </button>
+                                <span className={styles.pageLabel}>{page.label}</span>
+                                <span className={styles.pageLabelAr}>{page.labelAr}</span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* AI Badge */}
+            <div style={{ textAlign: 'center' }}>
+                <span className={styles.aiBadge}>
+                    <span className={styles.aiBadgeDot} />
+                    Powered by Claude Opus
+                </span>
+            </div>
+
+            {/* Generate Button */}
+            <button
+                className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
+                onClick={handleGenerate}
+                disabled={!canGenerate || state.isGenerating}
+                id="webbuilder-generate-btn"
+            >
+                {state.isGenerating ? (
+                    <><Loader2 size={18} className={styles.spin} /> جاري البناء...</>
                 ) : (
-                    /* Empty State */
-                    <div className={styles.empty}>
-                        <div className={styles.emptyIcon}>
-                            <Globe size={48} />
-                        </div>
-                        <h3>Website Builder</h3>
-                        <p>
-                            صمم وأنشئ موقعك الإلكتروني بالكامل باستخدام الذكاء الاصطناعي.
-                            <br />
-                            حدد نوع موقعك، اختر الألوان والنمط، واترك Claude Opus يبني لك موقع احترافي كامل
-                        </p>
-                        <div className={styles.steps}>
-                            <div className={styles.step}>
-                                <span className={styles.stepNum}>1</span>
-                                <span>أدخل اسم ووصف موقعك</span>
-                            </div>
-                            <div className={styles.step}>
-                                <span className={styles.stepNum}>2</span>
-                                <span>اختر نوع الموقع والألوان</span>
-                            </div>
-                            <div className={styles.step}>
-                                <span className={styles.stepNum}>3</span>
-                                <span>حدد الأقسام المطلوبة</span>
-                            </div>
-                            <div className={styles.step}>
-                                <span className={styles.stepNum}>4</span>
-                                <span>اضغط Build Website</span>
-                            </div>
-                        </div>
-                    </div>
+                    <><Zap size={18} /> Build Website</>
                 )}
-            </main>
-        </div>
+            </button>
+
+            {/* Bottom Actions */}
+            {state.generatedHtml && (
+                <div className={styles.bottomActions}>
+                    <button className={styles.resetBtn} onClick={handleReset}>
+                        <RotateCcw size={14} /> Reset
+                    </button>
+                    <button className={styles.exportBtn} onClick={handleExportHtml}>
+                        <Download size={14} /> Export HTML
+                    </button>
+                </div>
+            )}
+        </ToolLayout>
     );
 }

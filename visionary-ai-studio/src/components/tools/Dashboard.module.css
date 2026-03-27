@@ -288,100 +288,135 @@
     flex-shrink: 0;
 }
 
-/* ======= TWO COLUMN ======= */
-.twoCol {
+/* ======= ALL TOOLS GRID (Centered) ======= */
+.allToolsGrid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
 }
 
-.rightCol {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* ======= TOOLS GRID ======= */
-.toolsGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.toolCategory {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.catTitle {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    padding: 0 4px;
-}
-
-.catTools {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-}
-
-.toolItem {
+.toolCard {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 14px 16px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     cursor: pointer;
     font-family: inherit;
-    text-align: left;
-    transition: all 150ms ease;
+    text-align: right;
+    transition: all 200ms ease;
 }
 
-.toolItem:hover {
+.toolCard:hover {
     background: var(--bg-hover);
     border-color: var(--border-secondary);
-    transform: translateX(2px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-.toolItemIcon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+.toolCardIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: rgba(6, 182, 212, 0.08);
     color: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 150ms ease;
+    transition: all 200ms ease;
 }
 
-.toolItem:hover .toolItemIcon {
+.toolCard:hover .toolCardIcon {
     background: rgba(6, 182, 212, 0.15);
 }
 
-.toolItemText {
+.toolCardText {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
     min-width: 0;
 }
 
-.toolName {
+.toolCardName {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
 }
 
-.toolNameAr {
+.toolCardDesc {
     font-size: 11px;
     color: var(--text-muted);
+}
+
+.toolCardArrow {
+    color: var(--text-muted);
+    opacity: 0;
+    transition: all 200ms ease;
+    flex-shrink: 0;
+}
+
+.toolCard:hover .toolCardArrow {
+    opacity: 1;
+    transform: translateX(-4px);
+}
+
+/* ======= UPGRADE BANNER ======= */
+.upgradeBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.05));
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: var(--radius-md);
+}
+
+.upgradeBannerContent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.upgradeBannerIcon {
+    color: #F59E0B;
+}
+
+.upgradeBannerTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+
+.upgradeBannerDesc {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.upgradeBannerBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 200ms ease;
+    white-space: nowrap;
+}
+
+.upgradeBannerBtn:hover {
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    transform: translateY(-1px);
 }
 
 /* ======= ACTIVITY ======= */
@@ -558,8 +593,8 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .twoCol {
-        grid-template-columns: 1fr;
+    .allToolsGrid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -581,7 +616,13 @@
         align-items: flex-start;
     }
 
-    .catTools {
+    .allToolsGrid {
         grid-template-columns: 1fr;
+    }
+
+    .upgradeBanner {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
     }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAppStore, TOOLS, TOOL_CATEGORIES, ToolId } from '@/store/useAppStore';
+import { useAppStore, TOOLS, ToolId } from '@/store/useAppStore';
 import { useSubscription } from '@/lib/SubscriptionContext';
 import PricingModal from '@/components/subscription/PricingModal';
 import {
@@ -143,74 +143,52 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Two Column Layout */}
-            <div className={styles.twoCol}>
-                {/* All Tools */}
-                <div className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <h2><Star size={18} /> جميع الأدوات</h2>
-                        <span className={styles.toolCount}>{TOOLS.length} أداة</span>
-                    </div>
-                    <div className={styles.toolsGrid}>
-                        {TOOL_CATEGORIES.map((cat) => (
-                            <div key={cat.id} className={styles.toolCategory}>
-                                <h3 className={styles.catTitle}>{cat.nameAr}</h3>
-                                <div className={styles.catTools}>
-                                    {TOOLS.filter(t => t.category === cat.id).map((tool) => {
-                                        const IconComp = iconMap[tool.icon];
-                                        return (
-                                            <button
-                                                key={tool.id}
-                                                className={styles.toolItem}
-                                                onClick={() => setActiveTool(tool.id)}
-                                            >
-                                                {IconComp && (
-                                                    <div className={styles.toolItemIcon}>
-                                                        <IconComp size={16} />
-                                                    </div>
-                                                )}
-                                                <div className={styles.toolItemText}>
-                                                    <span className={styles.toolName}>{tool.name}</span>
-                                                    <span className={styles.toolNameAr}>{tool.nameAr}</span>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+            {/* All Tools - Centered */}
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <h2><Star size={18} /> جميع الأدوات</h2>
+                    <span className={styles.toolCount}>{TOOLS.length} أداة</span>
                 </div>
-
-                {/* Right Column */}
-                <div className={styles.rightCol}>
-                    {/* Current Plan */}
-                    <div className={styles.planCard}>
-                        <div className={styles.planHeader}>
-                            <Crown size={20} className={styles.planIcon} />
-                            <div>
-                                <span className={styles.planName}>خطة {PLAN_NAMES[plan] || 'المجانية'}</span>
-                                <span className={styles.planDesc}>
-                                    {plan === 'free' ? 'ترقية لفتح ميزات أكثر' : 'استمتع بجميع الميزات'}
-                                </span>
-                            </div>
-                        </div>
-                        <div className={styles.planUsage}>
-                            <div className={styles.usageHeader}>
-                                <span>الرصيد</span>
-                                <span className={styles.usageNumbers}>{credits} كريدت</span>
-                            </div>
-                        </div>
-                        {plan === 'free' && (
-                            <button className={styles.upgradeBtn} onClick={() => setShowPricing(true)}>
-                                <Crown size={14} />
-                                <span>ترقية للخطة الاحترافية</span>
-                                <ArrowRight size={14} />
+                <div className={styles.allToolsGrid}>
+                    {TOOLS.map((tool) => {
+                        const IconComp = iconMap[tool.icon];
+                        return (
+                            <button
+                                key={tool.id}
+                                className={styles.toolCard}
+                                onClick={() => setActiveTool(tool.id)}
+                            >
+                                {IconComp && (
+                                    <div className={styles.toolCardIcon}>
+                                        <IconComp size={20} />
+                                    </div>
+                                )}
+                                <div className={styles.toolCardText}>
+                                    <span className={styles.toolCardName}>{tool.nameAr}</span>
+                                    <span className={styles.toolCardDesc}>{tool.name}</span>
+                                </div>
+                                <ChevronRight size={14} className={styles.toolCardArrow} />
                             </button>
-                        )}
-                    </div>
+                        );
+                    })}
                 </div>
             </div>
+
+            {/* Upgrade Banner */}
+            {plan === 'free' && (
+                <div className={styles.upgradeBanner}>
+                    <div className={styles.upgradeBannerContent}>
+                        <Crown size={18} className={styles.upgradeBannerIcon} />
+                        <div>
+                            <span className={styles.upgradeBannerTitle}>ترقية للخطة الاحترافية</span>
+                            <span className={styles.upgradeBannerDesc}>احصل على 500 كريدت شهرياً وميزات إضافية</span>
+                        </div>
+                    </div>
+                    <button className={styles.upgradeBannerBtn} onClick={() => setShowPricing(true)}>
+                        ترقية الآن <ArrowRight size={14} />
+                    </button>
+                </div>
+            )}
 
             {/* Pricing Modal */}
             <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />

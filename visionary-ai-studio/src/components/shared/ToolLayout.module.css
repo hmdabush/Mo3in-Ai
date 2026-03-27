@@ -1,0 +1,91 @@
+.container {
+    height: calc(100vh - 94px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
+        var(--bg-primary);
+}
+
+/* ======= CONTROLS (Centered) ======= */
+.controlsSection {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.headerIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.titleAr {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 2px 0 0;
+}
+
+.description {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    direction: rtl;
+    margin: 0;
+    padding: 10px 14px;
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: 10px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ======= OUTPUT (Full Width) ======= */
+.outputSection {
+    flex: 1;
+    width: 100%;
+    padding: 20px 28px 40px;
+    border-top: 1px solid var(--border-primary);
+    background: var(--bg-secondary);
+    min-height: 200px;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 768px) {
+    .controlsSection {
+        padding: 16px;
+    }
+
+    .outputSection {
+        padding: 16px;
+    }
+}

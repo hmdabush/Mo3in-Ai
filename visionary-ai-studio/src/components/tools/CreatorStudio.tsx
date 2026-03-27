@@ -9,7 +9,7 @@ import {
     Heart, Star, Copy, Check, Image, Grid3X3, DownloadCloud, X,
 } from 'lucide-react';
 import styles from './CreatorStudio.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const DUMMY_IMAGES = [
     'https://picsum.photos/seed/vis1/400/400',
@@ -167,239 +167,224 @@ export default function CreatorStudio() {
 
     const canGenerate = state.mainProduct !== null;
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Sparkles size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Creator Studio</h2>
-                            <p className={styles.subtitle}>استوديو الإبداع</p>
-                        </div>
+    const outputJSX = (
+        <>
+            {state.isGenerating ? (
+                <div className={styles.loading}>
+                    <div className={styles.spinner}>
+                        <div className={styles.spinnerRing} />
+                        <Sparkles size={24} className={styles.spinnerIcon} />
+                    </div>
+                    <h3>Creating AI Magic...</h3>
+                    <p>Analyzing product & style, generating {variationCount} unique variations</p>
+                    <div className={styles.loadingGrid}>
+                        {Array.from({ length: variationCount }).map((_, i) => (
+                            <div key={i} className={styles.loadingCell} style={{ animationDelay: `${i * 0.15}s` }} />
+                        ))}
                     </div>
                 </div>
-
-                <ToolGuide
-                    title="استوديو الإبداع"
-                    description="أنشئ صور إبداعية احترافية لمنتجاتك باستخدام الذكاء الاصطناعي. ارفع صورة منتجك واختر الإعدادات المناسبة."
-                    steps={[
-                        'ارفع صورة المنتج الأساسية',
-                        'اختر الإضاءة والزاوية والخلفية المناسبة',
-                        'اكتب وصف إضافي إن أردت (اختياري)',
-                        'اضغط "Generate" لإنشاء التصاميم',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    <ImageUploader
-                        label="Main Product Image"
-                        image={state.mainProduct}
-                        onUpload={handleMainProductUpload}
-                        onRemove={() => updateCreatorStudio({ mainProduct: null })}
-                    />
-
-                    <ImageUploader
-                        label="Style Reference (Optional)"
-                        image={state.styleReference}
-                        onUpload={handleStyleUpload}
-                        onRemove={() => updateCreatorStudio({ styleReference: null })}
-                        compact
-                    />
-
-                    {/* Style Presets */}
-                    <div>
-                        <label className="label">Style Preset</label>
-                        <div className={styles.styleGrid}>
-                            {STYLE_PRESETS.map((s) => (
-                                <button
-                                    key={s.value}
-                                    className={`${styles.styleBtn} ${selectedStyle === s.value ? styles.styleBtnActive : ''}`}
-                                    onClick={() => setSelectedStyle(s.value)}
-                                >
-                                    <span>{s.icon}</span>
-                                    <span>{s.label}</span>
-                                </button>
-                            ))}
+            ) : state.generatedImages.length > 0 ? (
+                <div className={styles.results}>
+                    <div className={styles.resultsHeader}>
+                        <h3>Generated Variations</h3>
+                        <div className={styles.resultsActions}>
+                            {favorites.size > 0 && (
+                                <span className={styles.favCount}>
+                                    <Heart size={14} /> {favorites.size} favorited
+                                </span>
+                            )}
+                            <span className={styles.resultsCount}>{state.generatedImages.length} images</span>
                         </div>
                     </div>
-
-                    {/* Background Presets */}
-                    <div>
-                        <label className="label">Background</label>
-                        <div className={styles.bgGrid}>
-                            {BACKGROUND_PRESETS.map((bg) => (
-                                <button
-                                    key={bg.value}
-                                    className={`${styles.bgBtn} ${selectedBg === bg.value ? styles.bgBtnActive : ''}`}
-                                    onClick={() => setSelectedBg(bg.value)}
-                                    title={bg.label}
-                                >
-                                    <span
-                                        className={styles.bgSwatch}
-                                        style={{ background: bg.color || '#333' }}
-                                    />
-                                    <span className={styles.bgLabel}>{bg.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className={styles.inputRow}>
-                        <SelectField
-                            label="Lighting"
-                            value={state.lighting}
-                            onChange={(v) => updateCreatorStudio({ lighting: v })}
-                            options={LIGHTING_OPTIONS}
-                        />
-                        <SelectField
-                            label="Camera Angle"
-                            value={state.angle}
-                            onChange={(v) => updateCreatorStudio({ angle: v })}
-                            options={ANGLE_OPTIONS}
-                        />
-                    </div>
-
-                    {/* Variation Count */}
-                    <div>
-                        <label className="label">Variations: {variationCount}</label>
-                        <div className={styles.varCountRow}>
-                            {[4, 6, 9].map(n => (
-                                <button
-                                    key={n}
-                                    className={`${styles.varCountBtn} ${variationCount === n ? styles.varCountBtnActive : ''}`}
-                                    onClick={() => setVariationCount(n)}
-                                >
-                                    <Grid3X3 size={12} /> {n}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="label">AI Vision Prompt</label>
-                        <textarea
-                            className="input-field"
-                            rows={4}
-                            placeholder="Describe the desired scene, style, mood... e.g., 'Product on a marble table in a luxurious penthouse with city skyline view, warm ambient lighting'"
-                            value={state.visionPrompt}
-                            onChange={(e) => updateCreatorStudio({ visionPrompt: e.target.value })}
-                            style={{ resize: 'vertical', minHeight: '100px' }}
-                        />
-                    </div>
-
-                    <button
-                        className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
-                        onClick={handleGenerate}
-                        disabled={!canGenerate || state.isGenerating}
-                        id="creator-generate-btn"
-                    >
-                        {state.isGenerating ? (
-                            <><Loader2 size={18} className={styles.spin} /> Generating {variationCount} Variations...</>
-                        ) : (
-                            <><Zap size={18} /> Generate {variationCount} Variations</>
-                        )}
-                    </button>
-
-                    {state.generatedImages.length > 0 && (
-                        <div className={styles.bottomActions}>
-                            <button className={styles.resetBtn} onClick={handleReset}>
-                                <RotateCcw size={14} /> Reset All
-                            </button>
-                            <button className={styles.downloadAllBtn} onClick={handleDownloadAll}>
-                                <DownloadCloud size={14} /> Download All
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
-                {state.isGenerating ? (
-                    <div className={styles.loading}>
-                        <div className={styles.spinner}>
-                            <div className={styles.spinnerRing} />
-                            <Sparkles size={24} className={styles.spinnerIcon} />
-                        </div>
-                        <h3>Creating AI Magic...</h3>
-                        <p>Analyzing product & style, generating {variationCount} unique variations</p>
-                        <div className={styles.loadingGrid}>
-                            {Array.from({ length: variationCount }).map((_, i) => (
-                                <div key={i} className={styles.loadingCell} style={{ animationDelay: `${i * 0.15}s` }} />
-                            ))}
-                        </div>
-                    </div>
-                ) : state.generatedImages.length > 0 ? (
-                    <div className={styles.results}>
-                        <div className={styles.resultsHeader}>
-                            <h3>Generated Variations</h3>
-                            <div className={styles.resultsActions}>
-                                {favorites.size > 0 && (
-                                    <span className={styles.favCount}>
-                                        <Heart size={14} /> {favorites.size} favorited
-                                    </span>
-                                )}
-                                <span className={styles.resultsCount}>{state.generatedImages.length} images</span>
-                            </div>
-                        </div>
-                        <div className={styles.grid}>
-                            {state.generatedImages.map((img, i) => (
-                                <div key={i} className={styles.cell} style={{ animationDelay: `${i * 0.08}s` }}>
-                                    <div className={styles.cellImageWrap}>
-                                        <img src={img} alt={`Variation ${i + 1}`} />
-                                        <div className={styles.cellOverlay}>
-                                            <span className={styles.cellNum}>#{i + 1}</span>
-                                            <div className={styles.cellActions}>
-                                                <button
-                                                    className={`${styles.cellBtn} ${favorites.has(i) ? styles.cellBtnFav : ''}`}
-                                                    title="Favorite"
-                                                    onClick={() => toggleFavorite(i)}
-                                                >
-                                                    <Heart size={14} fill={favorites.has(i) ? '#EF4444' : 'none'} />
-                                                </button>
-                                                <button className={styles.cellBtn} title="Zoom" onClick={() => setZoomedImage(img)}>
-                                                    <ZoomIn size={14} />
-                                                </button>
-                                            </div>
+                    <div className={styles.grid}>
+                        {state.generatedImages.map((img, i) => (
+                            <div key={i} className={styles.cell} style={{ animationDelay: `${i * 0.08}s` }}>
+                                <div className={styles.cellImageWrap}>
+                                    <img src={img} alt={`Variation ${i + 1}`} />
+                                    <div className={styles.cellOverlay}>
+                                        <span className={styles.cellNum}>#{i + 1}</span>
+                                        <div className={styles.cellActions}>
+                                            <button
+                                                className={`${styles.cellBtn} ${favorites.has(i) ? styles.cellBtnFav : ''}`}
+                                                title="Favorite"
+                                                onClick={() => toggleFavorite(i)}
+                                            >
+                                                <Heart size={14} fill={favorites.has(i) ? '#EF4444' : 'none'} />
+                                            </button>
+                                            <button className={styles.cellBtn} title="Zoom" onClick={() => setZoomedImage(img)}>
+                                                <ZoomIn size={14} />
+                                            </button>
                                         </div>
                                     </div>
-                                    <button
-                                        className={styles.downloadBtn}
-                                        title={`Download Variation ${i + 1}`}
-                                        onClick={() => {
-                                            const link = document.createElement('a');
-                                            link.href = img;
-                                            link.download = `mo3in-ai-variation-${i + 1}.png`;
-                                            link.target = '_blank';
-                                            link.rel = 'noopener noreferrer';
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
-                                        }}
-                                    >
-                                        <Download size={14} />
-                                        <span>Download</span>
-                                    </button>
                                 </div>
-                            ))}
-                        </div>
+                                <button
+                                    className={styles.downloadBtn}
+                                    title={`Download Variation ${i + 1}`}
+                                    onClick={() => {
+                                        const link = document.createElement('a');
+                                        link.href = img;
+                                        link.download = `mo3in-ai-variation-${i + 1}.png`;
+                                        link.target = '_blank';
+                                        link.rel = 'noopener noreferrer';
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    }}
+                                >
+                                    <Download size={14} />
+                                    <span>Download</span>
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                ) : (
-                    <div className={styles.empty}>
-                        <div className={styles.emptyIcon}>
-                            <Sparkles size={48} />
-                        </div>
-                        <h3>Ready to Create</h3>
-                        <p>Upload a product image and configure your settings,<br />then click &quot;Generate&quot; to create AI variations</p>
-                        <div className={styles.steps}>
-                            <div className={styles.step}><span className={styles.stepNum}>1</span><span>Upload product image</span></div>
-                            <div className={styles.step}><span className={styles.stepNum}>2</span><span>Choose style & background</span></div>
-                            <div className={styles.step}><span className={styles.stepNum}>3</span><span>Set lighting & angle</span></div>
-                            <div className={styles.step}><span className={styles.stepNum}>4</span><span>Click Generate</span></div>
-                        </div>
+                </div>
+            ) : (
+                <div className={styles.empty}>
+                    <div className={styles.emptyIcon}>
+                        <Sparkles size={48} />
+                    </div>
+                    <h3>Ready to Create</h3>
+                    <p>Upload a product image and configure your settings,<br />then click &quot;Generate&quot; to create AI variations</p>
+                    <div className={styles.steps}>
+                        <div className={styles.step}><span className={styles.stepNum}>1</span><span>Upload product image</span></div>
+                        <div className={styles.step}><span className={styles.stepNum}>2</span><span>Choose style & background</span></div>
+                        <div className={styles.step}><span className={styles.stepNum}>3</span><span>Set lighting & angle</span></div>
+                        <div className={styles.step}><span className={styles.stepNum}>4</span><span>Click Generate</span></div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+
+    return (
+        <>
+            <ToolLayout
+                icon={<Sparkles size={20} />}
+                title="Creator Studio"
+                titleAr="استوديو الإبداع"
+                description="أنشئ صور إبداعية احترافية لمنتجاتك. ارفع صورة المنتج، اختر الأسلوب والإضاءة، واحصل على تصاميم بالذكاء الاصطناعي."
+                output={outputJSX}
+            >
+                <ImageUploader
+                    label="Main Product Image"
+                    image={state.mainProduct}
+                    onUpload={handleMainProductUpload}
+                    onRemove={() => updateCreatorStudio({ mainProduct: null })}
+                />
+
+                <ImageUploader
+                    label="Style Reference (Optional)"
+                    image={state.styleReference}
+                    onUpload={handleStyleUpload}
+                    onRemove={() => updateCreatorStudio({ styleReference: null })}
+                    compact
+                />
+
+                {/* Style Presets */}
+                <div>
+                    <label className="label">Style Preset</label>
+                    <div className={styles.styleGrid}>
+                        {STYLE_PRESETS.map((s) => (
+                            <button
+                                key={s.value}
+                                className={`${styles.styleBtn} ${selectedStyle === s.value ? styles.styleBtnActive : ''}`}
+                                onClick={() => setSelectedStyle(s.value)}
+                            >
+                                <span>{s.icon}</span>
+                                <span>{s.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Background Presets */}
+                <div>
+                    <label className="label">Background</label>
+                    <div className={styles.bgGrid}>
+                        {BACKGROUND_PRESETS.map((bg) => (
+                            <button
+                                key={bg.value}
+                                className={`${styles.bgBtn} ${selectedBg === bg.value ? styles.bgBtnActive : ''}`}
+                                onClick={() => setSelectedBg(bg.value)}
+                                title={bg.label}
+                            >
+                                <span
+                                    className={styles.bgSwatch}
+                                    style={{ background: bg.color || '#333' }}
+                                />
+                                <span className={styles.bgLabel}>{bg.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={styles.inputRow}>
+                    <SelectField
+                        label="Lighting"
+                        value={state.lighting}
+                        onChange={(v) => updateCreatorStudio({ lighting: v })}
+                        options={LIGHTING_OPTIONS}
+                    />
+                    <SelectField
+                        label="Camera Angle"
+                        value={state.angle}
+                        onChange={(v) => updateCreatorStudio({ angle: v })}
+                        options={ANGLE_OPTIONS}
+                    />
+                </div>
+
+                {/* Variation Count */}
+                <div>
+                    <label className="label">Variations: {variationCount}</label>
+                    <div className={styles.varCountRow}>
+                        {[4, 6, 9].map(n => (
+                            <button
+                                key={n}
+                                className={`${styles.varCountBtn} ${variationCount === n ? styles.varCountBtnActive : ''}`}
+                                onClick={() => setVariationCount(n)}
+                            >
+                                <Grid3X3 size={12} /> {n}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div>
+                    <label className="label">AI Vision Prompt</label>
+                    <textarea
+                        className="input-field"
+                        rows={4}
+                        placeholder="Describe the desired scene, style, mood... e.g., 'Product on a marble table in a luxurious penthouse with city skyline view, warm ambient lighting'"
+                        value={state.visionPrompt}
+                        onChange={(e) => updateCreatorStudio({ visionPrompt: e.target.value })}
+                        style={{ resize: 'vertical', minHeight: '100px' }}
+                    />
+                </div>
+
+                <button
+                    className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
+                    onClick={handleGenerate}
+                    disabled={!canGenerate || state.isGenerating}
+                    id="creator-generate-btn"
+                >
+                    {state.isGenerating ? (
+                        <><Loader2 size={18} className={styles.spin} /> Generating {variationCount} Variations...</>
+                    ) : (
+                        <><Zap size={18} /> Generate {variationCount} Variations</>
+                    )}
+                </button>
+
+                {state.generatedImages.length > 0 && (
+                    <div className={styles.bottomActions}>
+                        <button className={styles.resetBtn} onClick={handleReset}>
+                            <RotateCcw size={14} /> Reset All
+                        </button>
+                        <button className={styles.downloadAllBtn} onClick={handleDownloadAll}>
+                            <DownloadCloud size={14} /> Download All
+                        </button>
                     </div>
                 )}
-            </main>
+            </ToolLayout>
 
             {/* Zoom Modal */}
             {zoomedImage && (
@@ -408,6 +393,6 @@ export default function CreatorStudio() {
                     <img src={zoomedImage} alt="Zoomed" className={styles.zoomImage} onClick={(e) => e.stopPropagation()} />
                 </div>
             )}
-        </div>
+        </>
     );
 }

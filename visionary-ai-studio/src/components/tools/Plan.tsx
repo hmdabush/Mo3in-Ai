@@ -8,7 +8,7 @@ import {
     Target, Zap, Loader2, Copy, Check, Hash, Calendar, DollarSign,
     BarChart3, RotateCcw, Eye, TrendingUp,
 } from 'lucide-react';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 import styles from './Plan.module.css';
 
 const MARKET_OPTIONS = [
@@ -135,76 +135,8 @@ export default function Plan() {
     const estimatedReach = parseInt(budget) * 120;
     const estimatedEngagement = Math.round(estimatedReach * 0.035);
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Target size={18} className={styles.sidebarTitleIcon} />
-                        <div><h2>Plan</h2><p className={styles.subtitle}>مخطط الحملات الاستراتيجية</p></div>
-                    </div>
-                </div>
-
-                <ToolGuide
-                    title="مخطط الحملات"
-                    description="خطط لحملاتك التسويقية على السوشيال ميديا. أنشئ جدول نشر متكامل مع محتوى مخصص لكل منصة."
-                    steps={[
-                        'أدخل وصف المنتج أو الخدمة',
-                        'اختر السوق المستهدف واللغة والأسلوب',
-                        'حدد عدد المنشورات المطلوبة',
-                        'اضغط "Generate Plan" لإنشاء خطة النشر',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    <ImageUploader label="Product Reference" image={state.productReference}
-                        onUpload={(file, url) => updatePlan({ productReference: { id: crypto.randomUUID(), file, url, name: file.name } })}
-                        onRemove={() => updatePlan({ productReference: null })} compact />
-
-                    <div>
-                        <label className="label">Campaign Goal</label>
-                        <textarea className="input-field" rows={3}
-                            placeholder="e.g., Launch a new product campaign targeting young Egyptians..."
-                            value={state.campaignGoal} onChange={(e) => updatePlan({ campaignGoal: e.target.value })}
-                            style={{ resize: 'vertical', minHeight: '80px' }} />
-                    </div>
-
-                    <SelectField label="Target Market" value={state.targetMarket} onChange={(v) => updatePlan({ targetMarket: v })} options={MARKET_OPTIONS} />
-                    <SelectField label="Language / Dialect" value={state.language} onChange={(v) => updatePlan({ language: v })} options={LANG_OPTIONS} />
-                    <SelectField label="Tone & Style" value={state.style} onChange={(v) => updatePlan({ style: v })} options={STYLE_OPTIONS} />
-                    <SelectField label="Primary Platform" value={platform} onChange={setPlatform} options={PLATFORM_OPTIONS} />
-                    <SelectField label="Number of Posts" value={postCount} onChange={setPostCount} options={POST_COUNT_OPTIONS} />
-
-                    {/* Budget Calculator */}
-                    <div className={styles.budgetSection}>
-                        <label className="label"><DollarSign size={12} /> Ad Budget (USD)</label>
-                        <input type="number" className="input-field" value={budget} onChange={(e) => setBudget(e.target.value)} min="50" step="50" />
-                        <div className={styles.budgetEstimates}>
-                            <div className={styles.budgetItem}>
-                                <TrendingUp size={12} />
-                                <span>Est. Reach: <strong>{estimatedReach.toLocaleString()}</strong></span>
-                            </div>
-                            <div className={styles.budgetItem}>
-                                <BarChart3 size={12} />
-                                <span>Est. Engagement: <strong>{estimatedEngagement.toLocaleString()}</strong></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`} onClick={handleGenerate} disabled={!canGenerate || state.isGenerating}>
-                        {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Creating Campaign...</>) : (<><Zap size={18} /> Generate {postCount} Posts</>)}
-                    </button>
-
-                    {state.generatedPosts.length > 0 && (
-                        <button className={styles.resetBtn} onClick={() => updatePlan({ generatedPosts: [] })}>
-                            <RotateCcw size={14} /> Reset Campaign
-                        </button>
-                    )}
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
-                {state.isGenerating ? (
+    const outputJSX = (
+                state.isGenerating ? (
                     <div className={styles.loading}>
                         <div className={styles.spinnerWrap}><div className={styles.spinnerRing} /><Target size={24} className={styles.spinnerIcon} /></div>
                         <h3>Crafting Localized Content...</h3>
@@ -253,8 +185,60 @@ export default function Plan() {
                         <h3>Campaign Planner</h3>
                         <p>Set your target market and campaign goal to generate<br />localized posts with visual ideas and hashtags</p>
                     </div>
-                )}
-            </main>
-        </div>
+                )
+    );
+
+    return (
+        <ToolLayout
+            icon={<Target size={18} />}
+            title="Plan"
+            titleAr="مخطط الحملات الاستراتيجية"
+            description="خطط حملاتك التسويقية بذكاء. حدد الهدف والميزانية واحصل على خطة تنفيذية مفصلة."
+            output={outputJSX}
+        >
+                    <ImageUploader label="Product Reference" image={state.productReference}
+                        onUpload={(file, url) => updatePlan({ productReference: { id: crypto.randomUUID(), file, url, name: file.name } })}
+                        onRemove={() => updatePlan({ productReference: null })} compact />
+
+                    <div>
+                        <label className="label">Campaign Goal</label>
+                        <textarea className="input-field" rows={3}
+                            placeholder="e.g., Launch a new product campaign targeting young Egyptians..."
+                            value={state.campaignGoal} onChange={(e) => updatePlan({ campaignGoal: e.target.value })}
+                            style={{ resize: 'vertical', minHeight: '80px' }} />
+                    </div>
+
+                    <SelectField label="Target Market" value={state.targetMarket} onChange={(v) => updatePlan({ targetMarket: v })} options={MARKET_OPTIONS} />
+                    <SelectField label="Language / Dialect" value={state.language} onChange={(v) => updatePlan({ language: v })} options={LANG_OPTIONS} />
+                    <SelectField label="Tone & Style" value={state.style} onChange={(v) => updatePlan({ style: v })} options={STYLE_OPTIONS} />
+                    <SelectField label="Primary Platform" value={platform} onChange={setPlatform} options={PLATFORM_OPTIONS} />
+                    <SelectField label="Number of Posts" value={postCount} onChange={setPostCount} options={POST_COUNT_OPTIONS} />
+
+                    {/* Budget Calculator */}
+                    <div className={styles.budgetSection}>
+                        <label className="label"><DollarSign size={12} /> Ad Budget (USD)</label>
+                        <input type="number" className="input-field" value={budget} onChange={(e) => setBudget(e.target.value)} min="50" step="50" />
+                        <div className={styles.budgetEstimates}>
+                            <div className={styles.budgetItem}>
+                                <TrendingUp size={12} />
+                                <span>Est. Reach: <strong>{estimatedReach.toLocaleString()}</strong></span>
+                            </div>
+                            <div className={styles.budgetItem}>
+                                <BarChart3 size={12} />
+                                <span>Est. Engagement: <strong>{estimatedEngagement.toLocaleString()}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`} onClick={handleGenerate} disabled={!canGenerate || state.isGenerating}>
+                        {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Creating Campaign...</>) : (<><Zap size={18} /> Generate {postCount} Posts</>)}
+                    </button>
+
+                    {state.generatedPosts.length > 0 && (
+                        <button className={styles.resetBtn} onClick={() => updatePlan({ generatedPosts: [] })}>
+                            <RotateCcw size={14} /> Reset Campaign
+                        </button>
+                    )}
+        </ToolLayout>
     );
 }

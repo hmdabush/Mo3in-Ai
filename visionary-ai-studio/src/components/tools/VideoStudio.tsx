@@ -9,7 +9,7 @@ import {
     Download, RotateCcw, Sparkles,
 } from 'lucide-react';
 import styles from './VideoStudio.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const CAMERA_MOVES = [
     { value: 'pan', label: 'Pan' },
@@ -165,196 +165,179 @@ export default function VideoStudio() {
 
     const canGenerate = state.firstFrame !== null && state.lastFrame !== null;
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Video size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Video Studio</h2>
-                            <p className={styles.subtitle}>استوديو إنتاج الفيديو</p>
-                        </div>
-                    </div>
+    const outputContent = (
+        <>
+            {state.isGenerating ? (
+                <div className={styles.loading}>
+                    <div className={styles.spinnerWrap}><div className={styles.spinnerRing} /><Video size={24} className={styles.spinnerIcon} /></div>
+                    <h3>Directing Your Video...</h3>
+                    <p>AI is creating a {videoStyle} transition with {CAMERA_MOVES.find(c => c.value === state.cameraMove)?.label} camera move</p>
                 </div>
-
-                <ToolGuide
-                    title="استوديو الفيديو"
-                    description="أنشئ فيديوهات إعلانية سينمائية بالذكاء الاصطناعي. ارفع صورتين (البداية والنهاية) وسيقوم AI بإنشاء فيديو متحرك بينهما."
-                    steps={[
-                        'ارفع صورة الإطار الأول (البداية)',
-                        'ارفع صورة الإطار الأخير (النهاية) - اختياري',
-                        'اختر حركة الكاميرا والمؤثرات والمدة',
-                        'اضغط "Generate Video" لإنشاء الفيديو',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    {/* Dual Frame Upload */}
-                    <div className={styles.framesRow}>
-                        <div className={styles.frameCol}>
-                            <ImageUploader label="First Frame" image={state.firstFrame}
-                                onUpload={(file, url) => updateVideoStudio({ firstFrame: { id: crypto.randomUUID(), file, url, name: file.name } })}
-                                onRemove={() => updateVideoStudio({ firstFrame: null })} />
-                            <span className={styles.frameHint}>Raw product / start</span>
+            ) : state.generatedVideoUrl ? (
+                <div className={styles.results}>
+                    <div className={styles.playerSection}>
+                        <div className={styles.playerLabel}>
+                            <span><Sparkles size={14} /> Generated Video</span>
+                            <span className={styles.badge}>
+                                {CAMERA_MOVES.find(c => c.value === state.cameraMove)?.label} &bull; {state.duration} &bull; {videoStyle}
+                            </span>
                         </div>
-                        <div className={styles.frameArrow}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div className={styles.frameCol}>
-                            <ImageUploader label="Last Frame" image={state.lastFrame}
-                                onUpload={(file, url) => updateVideoStudio({ lastFrame: { id: crypto.randomUUID(), file, url, name: file.name } })}
-                                onRemove={() => updateVideoStudio({ lastFrame: null })} />
-                            <span className={styles.frameHint}>Lifestyle / end look</span>
-                        </div>
-                    </div>
-
-                    {/* Motion & Audio Prompt */}
-                    <div>
-                        <label className="label">Motion & Audio Prompt</label>
-                        <textarea className="input-field" rows={4}
-                            placeholder="Describe camera movement and sound, e.g., 'Fast camera zoom into the product, water splashing in slow motion. Audio: Dramatic bass drop and water splash'"
-                            value={state.motionPrompt} onChange={(e) => updateVideoStudio({ motionPrompt: e.target.value })}
-                            style={{ resize: 'vertical', minHeight: '100px' }} />
-                    </div>
-
-                    {/* Camera Move */}
-                    <SelectField label="Camera Move" value={state.cameraMove} options={CAMERA_MOVES}
-                        onChange={(v) => updateVideoStudio({ cameraMove: v })} />
-
-                    {/* Transition Effect */}
-                    <SelectField label="Transition Effect" value={transition} options={TRANSITION_EFFECTS}
-                        onChange={setTransition} />
-
-                    {/* Video Style */}
-                    <SelectField label="Video Style" value={videoStyle} options={VIDEO_STYLES}
-                        onChange={setVideoStyle} />
-
-                    {/* Output Settings */}
-                    <div className={styles.settingsSection}>
-                        <div className={styles.settingGroup}>
-                            <label className="label">Aspect Ratio</label>
-                            <div className={styles.chipRow}>
-                                {['16:9', '9:16', '1:1', '4:3'].map((r) => (
-                                    <button key={r} className={`${styles.chip} ${state.aspectRatio === r ? styles.chipActive : ''}`}
-                                        onClick={() => updateVideoStudio({ aspectRatio: r })}>{r}</button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className={styles.settingGroup}>
-                            <label className="label">Quality</label>
-                            <div className={styles.chipRow}>
-                                {['480p', '720p', '1080p', '4K'].map((q) => (
-                                    <button key={q} className={`${styles.chip} ${state.quality === q ? styles.chipActive : ''}`}
-                                        onClick={() => updateVideoStudio({ quality: q })}>{q}</button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className={styles.settingGroup}>
-                            <label className="label">Duration</label>
-                            <div className={styles.chipRow}>
-                                {['3s', '5s', '10s', '15s'].map((d) => (
-                                    <button key={d} className={`${styles.chip} ${state.duration === d ? styles.chipActive : ''}`}
-                                        onClick={() => updateVideoStudio({ duration: d })}>{d}</button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Generate */}
-                    <button className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
-                        onClick={handleGenerate} disabled={!canGenerate || state.isGenerating}>
-                        {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Directing Video...</>) : (<><Zap size={18} /> Generate Video</>)}
-                    </button>
-
-                    {state.generatedVideoUrl && (
-                        <button className={styles.resetBtn} onClick={() => { updateVideoStudio({ generatedVideoUrl: '', videoVariations: [] }); setIsPlaying(false); setProgress(0); }}>
-                            <RotateCcw size={14} /> Reset
-                        </button>
-                    )}
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
-                {state.isGenerating ? (
-                    <div className={styles.loading}>
-                        <div className={styles.spinnerWrap}><div className={styles.spinnerRing} /><Video size={24} className={styles.spinnerIcon} /></div>
-                        <h3>Directing Your Video...</h3>
-                        <p>AI is creating a {videoStyle} transition with {CAMERA_MOVES.find(c => c.value === state.cameraMove)?.label} camera move</p>
-                    </div>
-                ) : state.generatedVideoUrl ? (
-                    <div className={styles.results}>
-                        <div className={styles.playerSection}>
-                            <div className={styles.playerLabel}>
-                                <span><Sparkles size={14} /> Generated Video</span>
-                                <span className={styles.badge}>
-                                    {CAMERA_MOVES.find(c => c.value === state.cameraMove)?.label} &bull; {state.duration} &bull; {videoStyle}
-                                </span>
-                            </div>
-                            <div className={styles.videoContainer}>
-                                <video ref={videoRef} src={state.generatedVideoUrl} className={styles.videoElement}
-                                    muted={isMuted} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata}
-                                    onEnded={() => setIsPlaying(false)} playsInline />
-                                <div className={styles.videoControls}>
-                                    <button className={styles.controlBtn} onClick={handlePlayPause}>
-                                        {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-                                    </button>
-                                    <span className={styles.timeCode}>{currentTime}</span>
-                                    <div className={styles.progressTrack} onClick={handleProgressClick}>
-                                        <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-                                        <div className={styles.progressThumb} style={{ left: `${progress}%` }} />
-                                    </div>
-                                    <span className={styles.timeCode}>{duration}</span>
-                                    <button className={styles.controlBtn} onClick={() => setIsMuted(!isMuted)}>
-                                        {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                                    </button>
-                                    <button className={styles.controlBtn} onClick={() => videoRef.current?.requestFullscreen?.()}>
-                                        <Maximize2 size={16} />
-                                    </button>
+                        <div className={styles.videoContainer}>
+                            <video ref={videoRef} src={state.generatedVideoUrl} className={styles.videoElement}
+                                muted={isMuted} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata}
+                                onEnded={() => setIsPlaying(false)} playsInline />
+                            <div className={styles.videoControls}>
+                                <button className={styles.controlBtn} onClick={handlePlayPause}>
+                                    {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                                </button>
+                                <span className={styles.timeCode}>{currentTime}</span>
+                                <div className={styles.progressTrack} onClick={handleProgressClick}>
+                                    <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+                                    <div className={styles.progressThumb} style={{ left: `${progress}%` }} />
                                 </div>
-                            </div>
-
-                            {/* Download Options */}
-                            <div className={styles.downloadActions}>
-                                <button className={styles.downloadBtn}><Download size={14} /> Download MP4</button>
-                                <button className={styles.downloadBtn}><Download size={14} /> Download GIF</button>
-                                <button className={styles.downloadBtn}><Download size={14} /> Download WebM</button>
+                                <span className={styles.timeCode}>{duration}</span>
+                                <button className={styles.controlBtn} onClick={() => setIsMuted(!isMuted)}>
+                                    {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                </button>
+                                <button className={styles.controlBtn} onClick={() => videoRef.current?.requestFullscreen?.()}>
+                                    <Maximize2 size={16} />
+                                </button>
                             </div>
                         </div>
 
-                        {/* Variations */}
-                        <div className={styles.variationsSection}>
-                            <div className={styles.variationsLabel}>Camera Variations</div>
-                            <div className={styles.variationsGrid}>
-                                {state.videoVariations.map((vidUrl, i) => (
-                                    <div key={i} className={styles.variationCard} style={{ animationDelay: `${i * 0.12}s` }}
-                                        onClick={() => { updateVideoStudio({ generatedVideoUrl: vidUrl }); setIsPlaying(false); setProgress(0); }}>
-                                        <video src={vidUrl} className={styles.variationVideo} muted playsInline />
-                                        <div className={styles.variationOverlay}>
-                                            <Play size={20} />
-                                            <span>Variation {i + 1}</span>
-                                        </div>
+                        {/* Download Options */}
+                        <div className={styles.downloadActions}>
+                            <button className={styles.downloadBtn}><Download size={14} /> Download MP4</button>
+                            <button className={styles.downloadBtn}><Download size={14} /> Download GIF</button>
+                            <button className={styles.downloadBtn}><Download size={14} /> Download WebM</button>
+                        </div>
+                    </div>
+
+                    {/* Variations */}
+                    <div className={styles.variationsSection}>
+                        <div className={styles.variationsLabel}>Camera Variations</div>
+                        <div className={styles.variationsGrid}>
+                            {state.videoVariations.map((vidUrl, i) => (
+                                <div key={i} className={styles.variationCard} style={{ animationDelay: `${i * 0.12}s` }}
+                                    onClick={() => { updateVideoStudio({ generatedVideoUrl: vidUrl }); setIsPlaying(false); setProgress(0); }}>
+                                    <video src={vidUrl} className={styles.variationVideo} muted playsInline />
+                                    <div className={styles.variationOverlay}>
+                                        <Play size={20} />
+                                        <span>Variation {i + 1}</span>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                ) : (
-                    <div className={styles.empty}>
-                        <div className={styles.emptyIcon}><Video size={48} /></div>
-                        <h3>Frame-to-Frame Evolution</h3>
-                        <p>Upload a First Frame and Last Frame to create<br />a cinematic video transition with AI</p>
-                        <div className={styles.emptySteps}>
-                            <div className={styles.emptyStep}><span className={styles.stepNum}>1</span>Upload First & Last Frame</div>
-                            <div className={styles.emptyStep}><span className={styles.stepNum}>2</span>Describe motion & audio</div>
-                            <div className={styles.emptyStep}><span className={styles.stepNum}>3</span>Choose camera & transition</div>
-                            <div className={styles.emptyStep}><span className={styles.stepNum}>4</span>Click Generate Video</div>
-                        </div>
+                </div>
+            ) : (
+                <div className={styles.empty}>
+                    <div className={styles.emptyIcon}><Video size={48} /></div>
+                    <h3>Frame-to-Frame Evolution</h3>
+                    <p>Upload a First Frame and Last Frame to create<br />a cinematic video transition with AI</p>
+                    <div className={styles.emptySteps}>
+                        <div className={styles.emptyStep}><span className={styles.stepNum}>1</span>Upload First & Last Frame</div>
+                        <div className={styles.emptyStep}><span className={styles.stepNum}>2</span>Describe motion & audio</div>
+                        <div className={styles.emptyStep}><span className={styles.stepNum}>3</span>Choose camera & transition</div>
+                        <div className={styles.emptyStep}><span className={styles.stepNum}>4</span>Click Generate Video</div>
                     </div>
-                )}
-            </main>
-        </div>
+                </div>
+            )}
+        </>
+    );
+
+    return (
+        <ToolLayout
+            icon={<Video size={18} />}
+            title="Video Studio"
+            titleAr="استوديو إنتاج الفيديو"
+            description="أنشئ فيديوهات سينمائية احترافية من صورك. ارفع الصورة، اختر أسلوب الحركة، واحصل على فيديو بجودة عالية."
+            output={outputContent}
+        >
+            {/* Dual Frame Upload */}
+            <div className={styles.framesRow}>
+                <div className={styles.frameCol}>
+                    <ImageUploader label="First Frame" image={state.firstFrame}
+                        onUpload={(file, url) => updateVideoStudio({ firstFrame: { id: crypto.randomUUID(), file, url, name: file.name } })}
+                        onRemove={() => updateVideoStudio({ firstFrame: null })} />
+                    <span className={styles.frameHint}>Raw product / start</span>
+                </div>
+                <div className={styles.frameArrow}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+                <div className={styles.frameCol}>
+                    <ImageUploader label="Last Frame" image={state.lastFrame}
+                        onUpload={(file, url) => updateVideoStudio({ lastFrame: { id: crypto.randomUUID(), file, url, name: file.name } })}
+                        onRemove={() => updateVideoStudio({ lastFrame: null })} />
+                    <span className={styles.frameHint}>Lifestyle / end look</span>
+                </div>
+            </div>
+
+            {/* Motion & Audio Prompt */}
+            <div>
+                <label className="label">Motion & Audio Prompt</label>
+                <textarea className="input-field" rows={4}
+                    placeholder="Describe camera movement and sound, e.g., 'Fast camera zoom into the product, water splashing in slow motion. Audio: Dramatic bass drop and water splash'"
+                    value={state.motionPrompt} onChange={(e) => updateVideoStudio({ motionPrompt: e.target.value })}
+                    style={{ resize: 'vertical', minHeight: '100px' }} />
+            </div>
+
+            {/* Camera Move */}
+            <SelectField label="Camera Move" value={state.cameraMove} options={CAMERA_MOVES}
+                onChange={(v) => updateVideoStudio({ cameraMove: v })} />
+
+            {/* Transition Effect */}
+            <SelectField label="Transition Effect" value={transition} options={TRANSITION_EFFECTS}
+                onChange={setTransition} />
+
+            {/* Video Style */}
+            <SelectField label="Video Style" value={videoStyle} options={VIDEO_STYLES}
+                onChange={setVideoStyle} />
+
+            {/* Output Settings */}
+            <div className={styles.settingsSection}>
+                <div className={styles.settingGroup}>
+                    <label className="label">Aspect Ratio</label>
+                    <div className={styles.chipRow}>
+                        {['16:9', '9:16', '1:1', '4:3'].map((r) => (
+                            <button key={r} className={`${styles.chip} ${state.aspectRatio === r ? styles.chipActive : ''}`}
+                                onClick={() => updateVideoStudio({ aspectRatio: r })}>{r}</button>
+                        ))}
+                    </div>
+                </div>
+                <div className={styles.settingGroup}>
+                    <label className="label">Quality</label>
+                    <div className={styles.chipRow}>
+                        {['480p', '720p', '1080p', '4K'].map((q) => (
+                            <button key={q} className={`${styles.chip} ${state.quality === q ? styles.chipActive : ''}`}
+                                onClick={() => updateVideoStudio({ quality: q })}>{q}</button>
+                        ))}
+                    </div>
+                </div>
+                <div className={styles.settingGroup}>
+                    <label className="label">Duration</label>
+                    <div className={styles.chipRow}>
+                        {['3s', '5s', '10s', '15s'].map((d) => (
+                            <button key={d} className={`${styles.chip} ${state.duration === d ? styles.chipActive : ''}`}
+                                onClick={() => updateVideoStudio({ duration: d })}>{d}</button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Generate */}
+            <button className={`${styles.generateBtn} ${!canGenerate ? styles.disabled : ''}`}
+                onClick={handleGenerate} disabled={!canGenerate || state.isGenerating}>
+                {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Directing Video...</>) : (<><Zap size={18} /> Generate Video</>)}
+            </button>
+
+            {state.generatedVideoUrl && (
+                <button className={styles.resetBtn} onClick={() => { updateVideoStudio({ generatedVideoUrl: '', videoVariations: [] }); setIsPlaying(false); setProgress(0); }}>
+                    <RotateCcw size={14} /> Reset
+                </button>
+            )}
+        </ToolLayout>
     );
 }

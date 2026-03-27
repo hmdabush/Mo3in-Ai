@@ -13,7 +13,8 @@
       "Bash(find 'C:\\\\Users\\\\user\\\\Downloads\\\\mo3im ai saas\\\\visionary-ai-studio\\\\src\\\\components\\\\tools' -type f -name *.tsx)",
       "Bash(node -e \"const s = require\\(''stripe''\\); console.log\\(s.DEFAULT_API_VERSION || ''check types''\\)\")",
       "Bash(printf \"price_1TFEOFCondi5xrYJ8JyEJlMF\")",
-      "Bash(printf \"price_1TFERSCondi5xrYJBtknsKvS\")"
+      "Bash(printf \"price_1TFERSCondi5xrYJBtknsKvS\")",
+      "Bash(npm run:*)"
     ]
   }
 }

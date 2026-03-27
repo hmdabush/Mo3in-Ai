@@ -7,7 +7,7 @@ import {
     Zap, Clock, Filter, Download,
 } from 'lucide-react';
 import styles from './Analytics.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const OVERVIEW_STATS = [
     { label: 'إجمالي المشاهدات', value: '24,892', rawValue: 24892, change: '+18%', up: true, icon: Eye, color: '#06B6D4' },
@@ -58,42 +58,7 @@ export default function Analytics() {
 
     useEffect(() => setMounted(true), []);
 
-    return (
-        <div className={styles.layout}>
-            <div className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <TrendingUp size={22} className={styles.headerIcon} />
-                    <div>
-                        <h1>التحليلات</h1>
-                        <p>تتبع أداء محتواك عبر جميع المنصات</p>
-                    </div>
-                </div>
-                <div className={styles.headerRight}>
-                    <div className={styles.periodToggle}>
-                        {(['week', 'month', 'year'] as const).map(p => (
-                            <button key={p} className={`${styles.periodBtn} ${period === p ? styles.periodBtnActive : ''}`}
-                                onClick={() => setPeriod(p)}>
-                                {p === 'week' ? 'أسبوع' : p === 'month' ? 'شهر' : 'سنة'}
-                            </button>
-                        ))}
-                    </div>
-                    <button className={styles.exportBtn}>
-                        <Download size={14} /> تصدير
-                    </button>
-                </div>
-            </div>
-
-            <ToolGuide
-                    title="التحليلات"
-                    description="تابع أداء محتواك وحملاتك التسويقية. اطلع على إحصائيات المشاهدات والتفاعل والنمو عبر جميع المنصات."
-                    steps={[
-                        'راجع الإحصائيات العامة في لوحة التحكم',
-                        'تابع أداء كل منصة على حدة',
-                        'حلل البيانات الأسبوعية والشهرية',
-                        'استخدم التوصيات لتحسين استراتيجيتك',
-                    ]}
-                />
-
+    const outputJSX = (
             <div className={styles.content}>
                 {/* Overview Stats */}
                 <div className={styles.statsGrid}>
@@ -236,6 +201,29 @@ export default function Analytics() {
                     </div>
                 </div>
             </div>
-        </div>
+    );
+
+    return (
+        <ToolLayout
+            icon={<TrendingUp size={18} />}
+            title="التحليلات"
+            titleAr="Analytics"
+            description="تابع أداء حملاتك وتصاميمك. احصل على تحليلات وإحصائيات تفصيلية."
+            output={outputJSX}
+        >
+                <div className={styles.headerRight}>
+                    <div className={styles.periodToggle}>
+                        {(['week', 'month', 'year'] as const).map(p => (
+                            <button key={p} className={`${styles.periodBtn} ${period === p ? styles.periodBtnActive : ''}`}
+                                onClick={() => setPeriod(p)}>
+                                {p === 'week' ? 'أسبوع' : p === 'month' ? 'شهر' : 'سنة'}
+                            </button>
+                        ))}
+                    </div>
+                    <button className={styles.exportBtn}>
+                        <Download size={14} /> تصدير
+                    </button>
+                </div>
+        </ToolLayout>
     );
 }

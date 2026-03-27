@@ -8,7 +8,7 @@ import {
     Wand2, Zap, Loader2, Copy, Check, BookOpen, Palette,
     RefreshCw, Sparkles, RotateCcw,
 } from 'lucide-react';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 import styles from './PromptEngineer.module.css';
 
 const PROMPT_TEMPLATES = [
@@ -162,66 +162,8 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
         handleGenerate();
     }, [handleGenerate]);
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Wand2 size={18} className={styles.sidebarTitleIcon} />
-                        <div><h2>Prompt Engineer</h2><p className={styles.subtitle}>هندسة الأوامر</p></div>
-                    </div>
-                </div>
-
-                <ToolGuide
-                    title="هندسة الأوامر"
-                    description="أداة متخصصة لكتابة أوامر (Prompts) احترافية لنماذج الذكاء الاصطناعي. تساعدك في الحصول على أفضل نتائج ممكنة."
-                    steps={[
-                        'اختر نوع القالب (منتج، طعام، أزياء...)',
-                        'ارفع صورة مرجعية (اختياري)',
-                        'اختر النمط الفني والموديل المستهدف',
-                        'اضغط "Generate Prompt" للحصول على أمر احترافي',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    <ImageUploader label="Reference Image" image={state.referenceImage}
-                        onUpload={(file, url) => updatePrompt({ referenceImage: { id: crypto.randomUUID(), file, url, name: file.name } })}
-                        onRemove={() => updatePrompt({ referenceImage: null })} />
-
-                    <SelectField label="Prompt Template" value={selectedTemplate} onChange={setSelectedTemplate} options={PROMPT_TEMPLATES} />
-                    <SelectField label="Target AI Model" value={targetModel} onChange={setTargetModel} options={AI_MODELS} />
-
-                    <div>
-                        <label className="label"><Palette size={12} /> Style Tags (multi-select)</label>
-                        <div className={styles.styleGrid}>
-                            {STYLE_LIBRARY.map((s) => (
-                                <button key={s.value}
-                                    className={`${styles.styleBtn} ${selectedStyles.includes(s.value) ? styles.styleBtnActive : ''}`}
-                                    onClick={() => toggleStyle(s.value)}
-                                >
-                                    {s.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="label">Instructions / Idea</label>
-                        <textarea className="input-field" rows={4}
-                            placeholder="What kind of prompt do you want? e.g., 'Create a detailed Midjourney prompt for product photography with this exact lighting style'"
-                            value={state.instructions} onChange={(e) => updatePrompt({ instructions: e.target.value })}
-                            style={{ resize: 'vertical', minHeight: '100px' }} />
-                    </div>
-
-                    <button className={`${styles.generateBtn} ${!state.referenceImage ? styles.disabled : ''}`}
-                        onClick={handleGenerate} disabled={!state.referenceImage || state.isGenerating}>
-                        {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Analyzing Image...</>) : (<><Zap size={18} /> Reverse-Engineer Prompt</>)}
-                    </button>
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
-                {state.isGenerating ? (
+    const outputJSX = (
+                state.isGenerating ? (
                     <div className={styles.loading}>
                         <div className={styles.spinnerWrap}><div className={styles.spinnerRing} /><Wand2 size={24} className={styles.spinnerIcon} /></div>
                         <h3>Analyzing Image DNA...</h3>
@@ -285,8 +227,50 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
                         <h3>Prompt Engineer</h3>
                         <p>Upload a reference image and AI will reverse-engineer<br />a detailed, high-quality diffusion model prompt</p>
                     </div>
-                )}
-            </main>
-        </div>
+                )
+    );
+
+    return (
+        <ToolLayout
+            icon={<Wand2 size={18} />}
+            title="Prompt Engineer"
+            titleAr="هندسة الأوامر"
+            description="حلل أي صورة واستخرج الأوامر المستخدمة لإنشائها. ارفع الصورة واحصل على البرومبت."
+            output={outputJSX}
+        >
+                    <ImageUploader label="Reference Image" image={state.referenceImage}
+                        onUpload={(file, url) => updatePrompt({ referenceImage: { id: crypto.randomUUID(), file, url, name: file.name } })}
+                        onRemove={() => updatePrompt({ referenceImage: null })} />
+
+                    <SelectField label="Prompt Template" value={selectedTemplate} onChange={setSelectedTemplate} options={PROMPT_TEMPLATES} />
+                    <SelectField label="Target AI Model" value={targetModel} onChange={setTargetModel} options={AI_MODELS} />
+
+                    <div>
+                        <label className="label"><Palette size={12} /> Style Tags (multi-select)</label>
+                        <div className={styles.styleGrid}>
+                            {STYLE_LIBRARY.map((s) => (
+                                <button key={s.value}
+                                    className={`${styles.styleBtn} ${selectedStyles.includes(s.value) ? styles.styleBtnActive : ''}`}
+                                    onClick={() => toggleStyle(s.value)}
+                                >
+                                    {s.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="label">Instructions / Idea</label>
+                        <textarea className="input-field" rows={4}
+                            placeholder="What kind of prompt do you want? e.g., 'Create a detailed Midjourney prompt for product photography with this exact lighting style'"
+                            value={state.instructions} onChange={(e) => updatePrompt({ instructions: e.target.value })}
+                            style={{ resize: 'vertical', minHeight: '100px' }} />
+                    </div>
+
+                    <button className={`${styles.generateBtn} ${!state.referenceImage ? styles.disabled : ''}`}
+                        onClick={handleGenerate} disabled={!state.referenceImage || state.isGenerating}>
+                        {state.isGenerating ? (<><Loader2 size={18} className={styles.spin} /> Analyzing Image...</>) : (<><Zap size={18} /> Reverse-Engineer Prompt</>)}
+                    </button>
+        </ToolLayout>
     );
 }

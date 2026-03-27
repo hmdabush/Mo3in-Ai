@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Brush, Plus, Copy, Check, Type, Palette, Image, Save, Trash2, Edit3 } from 'lucide-react';
 import styles from './BrandKit.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const DEFAULT_COLORS = [
     { name: 'أساسي', hex: '#06B6D4' },
@@ -50,30 +50,7 @@ export default function BrandKit() {
         setColors([...colors, { name: `لون ${colors.length + 1}`, hex: '#6366F1' }]);
     };
 
-    return (
-        <div className={styles.layout}>
-            <div className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <Brush size={22} className={styles.headerIcon} />
-                    <div>
-                        <h1>هوية العلامة التجارية</h1>
-                        <p>إدارة الألوان والخطوط والإرشادات البصرية</p>
-                    </div>
-                </div>
-                <button className={styles.saveBtn}><Save size={14} /> حفظ التغييرات</button>
-            </div>
-
-            <ToolGuide
-                    title="هوية العلامة"
-                    description="أنشئ واحفظ هوية علامتك التجارية. حدد الألوان والخطوط والشعار لتطبيقها تلقائياً على جميع تصاميمك."
-                    steps={[
-                        'أضف ألوان علامتك التجارية',
-                        'اختر الخطوط المناسبة لهويتك',
-                        'ارفع شعار العلامة التجارية',
-                        'احفظ الهوية لاستخدامها في باقي الأدوات',
-                    ]}
-                />
-
+    const outputJSX = (
             <div className={styles.content}>
                 {/* Brand Identity */}
                 <div className={styles.section}>
@@ -160,6 +137,17 @@ export default function BrandKit() {
                     </div>
                 </div>
             </div>
-        </div>
+    );
+
+    return (
+        <ToolLayout
+            icon={<Brush size={18} />}
+            title="هوية العلامة التجارية"
+            titleAr="Brand Kit"
+            description="أنشئ هوية بصرية متكاملة لعلامتك التجارية. حدد الألوان والخطوط والأسلوب."
+            output={outputJSX}
+        >
+                <button className={styles.saveBtn}><Save size={14} /> حفظ التغييرات</button>
+        </ToolLayout>
     );
 }

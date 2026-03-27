@@ -7,7 +7,7 @@ import {
     Image as ImageIcon, Droplets, Contrast,
 } from 'lucide-react';
 import styles from './EditPro.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 interface SlotImage { id: string; url: string; name: string; }
 interface TextOverlay { id: string; text: string; x: number; y: number; fontSize: number; color: string; }
@@ -171,251 +171,236 @@ export default function EditPro() {
         { key: 'export', label: 'Export', icon: <Download size={12} /> },
     ];
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Palette size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Edit PRO</h2>
-                            <p className={styles.subtitle}>التحرير المتقدم</p>
-                        </div>
-                    </div>
-                </div>
-
-                <ToolGuide
-                    title="التحرير المتقدم"
-                    description="حرر صورك باحترافية مع فلاتر وأدوات تعديل متقدمة. تحكم في السطوع والتباين والألوان والمزيد."
-                    steps={[
-                        'ارفع الصورة المراد تحريرها',
-                        'اختر الفلتر المناسب من المجموعة',
-                        'عدّل الإعدادات (سطوع، تباين، تشبع...)',
-                        'احفظ أو حمّل الصورة المعدلة',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    {/* Image Slots */}
-                    <div>
-                        <label className="label">Image Slots</label>
-                        <div className={styles.imageSlots}>
-                            {images.map((img, i) => (
-                                <div key={img.id} className={`${styles.slotItem} ${i === activeIdx ? styles.slotItemActive : ''}`} onClick={() => setActiveIdx(i)}>
-                                    <img src={img.url} alt={img.name} className={styles.slotThumb} />
-                                    <span className={styles.slotName}>{img.name}</span>
-                                    <button className={styles.slotRemove} onClick={(e) => { e.stopPropagation(); removeImage(i); }}><X size={12} /></button>
-                                </div>
-                            ))}
-                            <button className={styles.slotBtn} onClick={() => fileRef.current?.click()}>
-                                <Plus size={14} /> Add Base Photo
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Panel Tabs */}
-                    <div className={styles.panelTabs}>
-                        {panels.map((p) => (
-                            <button
-                                key={p.key}
-                                className={`${styles.panelTab} ${activePanel === p.key ? styles.panelTabActive : ''}`}
-                                onClick={() => setActivePanel(p.key as typeof activePanel)}
+    const outputContent = (
+        <>
+            <div className={styles.canvas}>
+                {activeImage ? (
+                    <div className={styles.canvasInner}>
+                        <img
+                            src={activeImage.url}
+                            alt="Edit"
+                            className={styles.canvasImage}
+                            style={{ filter: filterStyle, transform: transformStyle }}
+                        />
+                        {textOverlays.map((overlay) => (
+                            <div
+                                key={overlay.id}
+                                className={styles.canvasText}
+                                style={{
+                                    left: `${overlay.x}%`,
+                                    top: `${overlay.y}%`,
+                                    fontSize: `${overlay.fontSize}px`,
+                                    color: overlay.color,
+                                }}
                             >
-                                {p.icon} {p.label}
-                            </button>
+                                {overlay.text}
+                            </div>
                         ))}
                     </div>
-
-                    {/* Filters Panel */}
-                    {activePanel === 'filters' && (
-                        <div className={styles.toolSection}>
-                            <div className={styles.toolSectionTitle}>Color Grading</div>
-                            <div className={styles.filterGrid}>
-                                {FILTERS.map((f) => (
-                                    <button key={f.value} className={`${styles.filterBtn} ${filter === f.value ? styles.filterBtnActive : ''}`} onClick={() => setFilter(f.value)}>
-                                        {f.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Adjustments Panel */}
-                    {activePanel === 'adjust' && (
-                        <div className={styles.toolSection}>
-                            <div className={styles.toolSectionTitle}>Fine Adjustments</div>
-                            <div className={styles.sliderGroup}>
-                                <div className={styles.sliderRow}>
-                                    <span className={styles.sliderLabel}>Brightness</span>
-                                    <input type="range" min="50" max="150" value={brightness} onChange={(e) => setBrightness(+e.target.value)} className={styles.slider} />
-                                    <span className={styles.sliderVal}>{brightness}%</span>
-                                </div>
-                                <div className={styles.sliderRow}>
-                                    <span className={styles.sliderLabel}>Contrast</span>
-                                    <input type="range" min="50" max="150" value={contrast} onChange={(e) => setContrast(+e.target.value)} className={styles.slider} />
-                                    <span className={styles.sliderVal}>{contrast}%</span>
-                                </div>
-                                <div className={styles.sliderRow}>
-                                    <span className={styles.sliderLabel}>Saturation</span>
-                                    <input type="range" min="0" max="200" value={saturation} onChange={(e) => setSaturation(+e.target.value)} className={styles.slider} />
-                                    <span className={styles.sliderVal}>{saturation}%</span>
-                                </div>
-                                <div className={styles.sliderRow}>
-                                    <span className={styles.sliderLabel}>Blur</span>
-                                    <input type="range" min="0" max="20" value={blur} onChange={(e) => setBlur(+e.target.value)} className={styles.slider} />
-                                    <span className={styles.sliderVal}>{blur}px</span>
-                                </div>
-                                <div className={styles.sliderRow}>
-                                    <span className={styles.sliderLabel}>Hue</span>
-                                    <input type="range" min="-180" max="180" value={hueRotate} onChange={(e) => setHueRotate(+e.target.value)} className={styles.slider} />
-                                    <span className={styles.sliderVal}>{hueRotate}°</span>
-                                </div>
-                            </div>
-
-                            <div className={styles.transformRow}>
-                                <button className={`${styles.transformBtn} ${flipH ? styles.transformBtnActive : ''}`} onClick={() => setFlipH(!flipH)}><FlipHorizontal size={14} /> Flip H</button>
-                                <button className={`${styles.transformBtn} ${flipV ? styles.transformBtnActive : ''}`} onClick={() => setFlipV(!flipV)}><FlipVertical size={14} /> Flip V</button>
-                                <button className={styles.transformBtn} onClick={() => setRotation((r) => (r + 90) % 360)}>
-                                    <RotateCcw size={14} /> Rotate
-                                </button>
-                            </div>
-
-                            <div className={styles.sliderRow} style={{ marginTop: '8px' }}>
-                                <span className={styles.sliderLabel}><ZoomIn size={12} /> Zoom</span>
-                                <input type="range" min="50" max="200" value={zoom} onChange={(e) => setZoom(+e.target.value)} className={styles.slider} />
-                                <span className={styles.sliderVal}>{zoom}%</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Crop Panel */}
-                    {activePanel === 'crop' && (
-                        <div className={styles.toolSection}>
-                            <div className={styles.toolSectionTitle}>Crop Ratio</div>
-                            <div className={styles.cropGrid}>
-                                {CROP_RATIOS.map((c) => (
-                                    <button
-                                        key={c.value}
-                                        className={`${styles.cropBtn} ${cropRatio === c.value ? styles.cropBtnActive : ''}`}
-                                        onClick={() => setCropRatio(c.value)}
-                                    >
-                                        {c.label}
-                                    </button>
-                                ))}
-                            </div>
-                            <p className={styles.cropHint}>Crop preview shown on canvas. Click Export to apply.</p>
-                        </div>
-                    )}
-
-                    {/* Text Overlay Panel */}
-                    {activePanel === 'text' && (
-                        <div className={styles.toolSection}>
-                            <div className={styles.toolSectionTitle}>Text Overlays</div>
-                            <button className={styles.addTextBtn} onClick={addTextOverlay}>
-                                <Plus size={14} /> Add Text Layer
-                            </button>
-                            {textOverlays.map((overlay) => (
-                                <div key={overlay.id} className={styles.textItem}>
-                                    <input
-                                        className={styles.textInput}
-                                        value={overlay.text}
-                                        onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, text: e.target.value } : t))}
-                                        placeholder="Enter text..."
-                                    />
-                                    <div className={styles.textControls}>
-                                        <input
-                                            type="range" min="12" max="72"
-                                            value={overlay.fontSize}
-                                            onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, fontSize: +e.target.value } : t))}
-                                            className={styles.slider}
-                                        />
-                                        <span className={styles.sliderVal}>{overlay.fontSize}px</span>
-                                        <input
-                                            type="color"
-                                            value={overlay.color}
-                                            onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, color: e.target.value } : t))}
-                                            className={styles.colorPicker}
-                                        />
-                                        <button className={styles.textRemoveBtn} onClick={() => removeTextOverlay(overlay.id)}>
-                                            <X size={12} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Export Panel */}
-                    {activePanel === 'export' && (
-                        <div className={styles.toolSection}>
-                            <div className={styles.toolSectionTitle}>Export Settings</div>
-                            <div className={styles.exportGrid}>
-                                {EXPORT_FORMATS.map((f) => (
-                                    <button
-                                        key={f.value}
-                                        className={`${styles.exportBtn} ${exportFormat === f.value ? styles.exportBtnActive : ''}`}
-                                        onClick={() => setExportFormat(f.value)}
-                                    >
-                                        {f.label}
-                                    </button>
-                                ))}
-                            </div>
-                            <button className={styles.exportDownloadBtn} onClick={handleExport} disabled={!activeImage}>
-                                <Download size={16} /> Export as {exportFormat.toUpperCase()}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </aside>
-
-            <div className={styles.workspace}>
-                <div className={styles.canvas}>
-                    {activeImage ? (
-                        <div className={styles.canvasInner}>
-                            <img
-                                src={activeImage.url}
-                                alt="Edit"
-                                className={styles.canvasImage}
-                                style={{ filter: filterStyle, transform: transformStyle }}
-                            />
-                            {textOverlays.map((overlay) => (
-                                <div
-                                    key={overlay.id}
-                                    className={styles.canvasText}
-                                    style={{
-                                        left: `${overlay.x}%`,
-                                        top: `${overlay.y}%`,
-                                        fontSize: `${overlay.fontSize}px`,
-                                        color: overlay.color,
-                                    }}
-                                >
-                                    {overlay.text}
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className={styles.canvasEmpty}>
-                            <div className={styles.canvasEmptyIcon}><Palette size={48} /></div>
-                            <h3>Edit PRO Canvas</h3>
-                            <p>Add images to start editing with filters,<br />color grading, and adjustments</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className={styles.bottomBar}>
-                    <button className={styles.bottomBtn} onClick={resetAll}><RotateCcw size={12} /> Reset All</button>
-                    <div className={styles.bottomCenter}>
-                        <span className={styles.bottomInfo}>
-                            {activeImage ? `${images.length} image${images.length > 1 ? 's' : ''} • ${filter !== 'none' ? FILTERS.find(f => f.value === filter)?.label : 'No filter'}` : 'No image loaded'}
-                        </span>
+                ) : (
+                    <div className={styles.canvasEmpty}>
+                        <div className={styles.canvasEmptyIcon}><Palette size={48} /></div>
+                        <h3>Edit PRO Canvas</h3>
+                        <p>Add images to start editing with filters,<br />color grading, and adjustments</p>
                     </div>
-                    <button className={`${styles.bottomBtn} ${styles.bottomBtnPrimary}`} onClick={handleExport} disabled={!activeImage}>
-                        <Download size={12} /> Export
-                    </button>
-                </div>
+                )}
             </div>
 
+            <div className={styles.bottomBar}>
+                <button className={styles.bottomBtn} onClick={resetAll}><RotateCcw size={12} /> Reset All</button>
+                <div className={styles.bottomCenter}>
+                    <span className={styles.bottomInfo}>
+                        {activeImage ? `${images.length} image${images.length > 1 ? 's' : ''} • ${filter !== 'none' ? FILTERS.find(f => f.value === filter)?.label : 'No filter'}` : 'No image loaded'}
+                    </span>
+                </div>
+                <button className={`${styles.bottomBtn} ${styles.bottomBtnPrimary}`} onClick={handleExport} disabled={!activeImage}>
+                    <Download size={12} /> Export
+                </button>
+            </div>
+        </>
+    );
+
+    return (
+        <>
+            <ToolLayout
+                icon={<Palette size={18} />}
+                title="Edit PRO"
+                titleAr="التحرير المتقدم"
+                description="عدّل وحسّن صورك باحترافية. أضف فلاتر، أزل الخلفية، وعدّل الألوان بأدوات متقدمة."
+                output={outputContent}
+            >
+                {/* Image Slots */}
+                <div>
+                    <label className="label">Image Slots</label>
+                    <div className={styles.imageSlots}>
+                        {images.map((img, i) => (
+                            <div key={img.id} className={`${styles.slotItem} ${i === activeIdx ? styles.slotItemActive : ''}`} onClick={() => setActiveIdx(i)}>
+                                <img src={img.url} alt={img.name} className={styles.slotThumb} />
+                                <span className={styles.slotName}>{img.name}</span>
+                                <button className={styles.slotRemove} onClick={(e) => { e.stopPropagation(); removeImage(i); }}><X size={12} /></button>
+                            </div>
+                        ))}
+                        <button className={styles.slotBtn} onClick={() => fileRef.current?.click()}>
+                            <Plus size={14} /> Add Base Photo
+                        </button>
+                    </div>
+                </div>
+
+                {/* Panel Tabs */}
+                <div className={styles.panelTabs}>
+                    {panels.map((p) => (
+                        <button
+                            key={p.key}
+                            className={`${styles.panelTab} ${activePanel === p.key ? styles.panelTabActive : ''}`}
+                            onClick={() => setActivePanel(p.key as typeof activePanel)}
+                        >
+                            {p.icon} {p.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Filters Panel */}
+                {activePanel === 'filters' && (
+                    <div className={styles.toolSection}>
+                        <div className={styles.toolSectionTitle}>Color Grading</div>
+                        <div className={styles.filterGrid}>
+                            {FILTERS.map((f) => (
+                                <button key={f.value} className={`${styles.filterBtn} ${filter === f.value ? styles.filterBtnActive : ''}`} onClick={() => setFilter(f.value)}>
+                                    {f.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Adjustments Panel */}
+                {activePanel === 'adjust' && (
+                    <div className={styles.toolSection}>
+                        <div className={styles.toolSectionTitle}>Fine Adjustments</div>
+                        <div className={styles.sliderGroup}>
+                            <div className={styles.sliderRow}>
+                                <span className={styles.sliderLabel}>Brightness</span>
+                                <input type="range" min="50" max="150" value={brightness} onChange={(e) => setBrightness(+e.target.value)} className={styles.slider} />
+                                <span className={styles.sliderVal}>{brightness}%</span>
+                            </div>
+                            <div className={styles.sliderRow}>
+                                <span className={styles.sliderLabel}>Contrast</span>
+                                <input type="range" min="50" max="150" value={contrast} onChange={(e) => setContrast(+e.target.value)} className={styles.slider} />
+                                <span className={styles.sliderVal}>{contrast}%</span>
+                            </div>
+                            <div className={styles.sliderRow}>
+                                <span className={styles.sliderLabel}>Saturation</span>
+                                <input type="range" min="0" max="200" value={saturation} onChange={(e) => setSaturation(+e.target.value)} className={styles.slider} />
+                                <span className={styles.sliderVal}>{saturation}%</span>
+                            </div>
+                            <div className={styles.sliderRow}>
+                                <span className={styles.sliderLabel}>Blur</span>
+                                <input type="range" min="0" max="20" value={blur} onChange={(e) => setBlur(+e.target.value)} className={styles.slider} />
+                                <span className={styles.sliderVal}>{blur}px</span>
+                            </div>
+                            <div className={styles.sliderRow}>
+                                <span className={styles.sliderLabel}>Hue</span>
+                                <input type="range" min="-180" max="180" value={hueRotate} onChange={(e) => setHueRotate(+e.target.value)} className={styles.slider} />
+                                <span className={styles.sliderVal}>{hueRotate}°</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.transformRow}>
+                            <button className={`${styles.transformBtn} ${flipH ? styles.transformBtnActive : ''}`} onClick={() => setFlipH(!flipH)}><FlipHorizontal size={14} /> Flip H</button>
+                            <button className={`${styles.transformBtn} ${flipV ? styles.transformBtnActive : ''}`} onClick={() => setFlipV(!flipV)}><FlipVertical size={14} /> Flip V</button>
+                            <button className={styles.transformBtn} onClick={() => setRotation((r) => (r + 90) % 360)}>
+                                <RotateCcw size={14} /> Rotate
+                            </button>
+                        </div>
+
+                        <div className={styles.sliderRow} style={{ marginTop: '8px' }}>
+                            <span className={styles.sliderLabel}><ZoomIn size={12} /> Zoom</span>
+                            <input type="range" min="50" max="200" value={zoom} onChange={(e) => setZoom(+e.target.value)} className={styles.slider} />
+                            <span className={styles.sliderVal}>{zoom}%</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Crop Panel */}
+                {activePanel === 'crop' && (
+                    <div className={styles.toolSection}>
+                        <div className={styles.toolSectionTitle}>Crop Ratio</div>
+                        <div className={styles.cropGrid}>
+                            {CROP_RATIOS.map((c) => (
+                                <button
+                                    key={c.value}
+                                    className={`${styles.cropBtn} ${cropRatio === c.value ? styles.cropBtnActive : ''}`}
+                                    onClick={() => setCropRatio(c.value)}
+                                >
+                                    {c.label}
+                                </button>
+                            ))}
+                        </div>
+                        <p className={styles.cropHint}>Crop preview shown on canvas. Click Export to apply.</p>
+                    </div>
+                )}
+
+                {/* Text Overlay Panel */}
+                {activePanel === 'text' && (
+                    <div className={styles.toolSection}>
+                        <div className={styles.toolSectionTitle}>Text Overlays</div>
+                        <button className={styles.addTextBtn} onClick={addTextOverlay}>
+                            <Plus size={14} /> Add Text Layer
+                        </button>
+                        {textOverlays.map((overlay) => (
+                            <div key={overlay.id} className={styles.textItem}>
+                                <input
+                                    className={styles.textInput}
+                                    value={overlay.text}
+                                    onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, text: e.target.value } : t))}
+                                    placeholder="Enter text..."
+                                />
+                                <div className={styles.textControls}>
+                                    <input
+                                        type="range" min="12" max="72"
+                                        value={overlay.fontSize}
+                                        onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, fontSize: +e.target.value } : t))}
+                                        className={styles.slider}
+                                    />
+                                    <span className={styles.sliderVal}>{overlay.fontSize}px</span>
+                                    <input
+                                        type="color"
+                                        value={overlay.color}
+                                        onChange={(e) => setTextOverlays(prev => prev.map(t => t.id === overlay.id ? { ...t, color: e.target.value } : t))}
+                                        className={styles.colorPicker}
+                                    />
+                                    <button className={styles.textRemoveBtn} onClick={() => removeTextOverlay(overlay.id)}>
+                                        <X size={12} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Export Panel */}
+                {activePanel === 'export' && (
+                    <div className={styles.toolSection}>
+                        <div className={styles.toolSectionTitle}>Export Settings</div>
+                        <div className={styles.exportGrid}>
+                            {EXPORT_FORMATS.map((f) => (
+                                <button
+                                    key={f.value}
+                                    className={`${styles.exportBtn} ${exportFormat === f.value ? styles.exportBtnActive : ''}`}
+                                    onClick={() => setExportFormat(f.value)}
+                                >
+                                    {f.label}
+                                </button>
+                            ))}
+                        </div>
+                        <button className={styles.exportDownloadBtn} onClick={handleExport} disabled={!activeImage}>
+                            <Download size={16} /> Export as {exportFormat.toUpperCase()}
+                        </button>
+                    </div>
+                )}
+            </ToolLayout>
+
             <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) addImage(f); e.target.value = ''; }} />
-        </div>
+        </>
     );
 }

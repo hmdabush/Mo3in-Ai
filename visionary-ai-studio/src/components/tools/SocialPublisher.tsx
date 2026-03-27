@@ -10,7 +10,7 @@ import {
     AlertCircle, ChevronRight, Sparkles, RotateCcw,
 } from 'lucide-react';
 import styles from './SocialPublisher.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const PLATFORMS = [
     { value: 'instagram', label: 'Instagram', icon: '📸', color: '#E4405F', bgColor: 'rgba(228, 64, 95, 0.1)' },
@@ -101,160 +101,8 @@ export default function SocialPublisher() {
     const characterCount = state.postContent.length;
     const maxChars = 2200;
 
-    return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <div className={styles.sidebarHeader}>
-                    <div className={styles.sidebarTitle}>
-                        <Send size={18} className={styles.sidebarTitleIcon} />
-                        <div>
-                            <h2>Social Publisher</h2>
-                            <p className={styles.subtitle}>النشر المباشر على المنصات</p>
-                        </div>
-                    </div>
-                </div>
-
-                <ToolGuide
-                    title="النشر المباشر"
-                    description="جهّز منشوراتك للنشر على منصات التواصل الاجتماعي. أضف النص والهاشتاقات واختر أفضل وقت للنشر."
-                    steps={[
-                        'اكتب نص المنشور',
-                        'أضف الهاشتاقات المناسبة',
-                        'اختر المنصة ووقت النشر المثالي',
-                        'اضغط "Schedule" لجدولة المنشور',
-                    ]}
-                />
-
-                <div className={styles.sidebarContent}>
-                    {/* Connected Accounts */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">🔗 الحسابات المربوطة</label>
-                        <div className={styles.accountsList}>
-                            {PLATFORMS.map((p) => {
-                                const account = state.accounts.find(a => a.platform === p.value);
-                                const isConnected = account?.connected || false;
-                                return (
-                                    <div key={p.value} className={`${styles.accountItem} ${isConnected ? styles.accountItemConnected : ''}`}>
-                                        <span className={styles.accountIcon}>{p.icon}</span>
-                                        <div className={styles.accountInfo}>
-                                            <span className={styles.accountName}>{p.label}</span>
-                                            {isConnected && <span className={styles.accountUsername}>{account?.username}</span>}
-                                        </div>
-                                        <button
-                                            className={`${styles.connectBtn} ${isConnected ? styles.connectBtnActive : ''}`}
-                                            onClick={() => handleConnect(p.value)}
-                                        >
-                                            {isConnected ? <><Unlink size={12} /> فصل</> : <><Link2 size={12} /> ربط</>}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Platform Selection */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">📤 اختر منصات النشر</label>
-                        <div className={styles.platformGrid}>
-                            {PLATFORMS.map((p) => {
-                                const account = state.accounts.find(a => a.platform === p.value);
-                                const isConnected = account?.connected || false;
-                                const isSelected = state.selectedPlatforms.includes(p.value);
-                                return (
-                                    <button
-                                        key={p.value}
-                                        className={`${styles.platformBtn} ${isSelected ? styles.platformBtnActive : ''}`}
-                                        onClick={() => isConnected && togglePlatform(p.value)}
-                                        disabled={!isConnected}
-                                        style={isSelected ? { borderColor: p.color, background: p.bgColor } : {}}
-                                    >
-                                        <span className={styles.platformEmoji}>{p.icon}</span>
-                                        <span>{p.label}</span>
-                                        {isSelected && <Check size={12} />}
-                                        {!isConnected && <span className={styles.platformLock}>🔒</span>}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Schedule Mode */}
-                    <div className={styles.sectionGroup}>
-                        <label className="label">⏰ وقت النشر</label>
-                        <div className={styles.scheduleToggle}>
-                            <button
-                                className={`${styles.scheduleBtn} ${state.scheduleMode === 'now' ? styles.scheduleBtnActive : ''}`}
-                                onClick={() => updateSocialPublisher({ scheduleMode: 'now' })}
-                            >
-                                <Send size={14} /> نشر فوري
-                            </button>
-                            <button
-                                className={`${styles.scheduleBtn} ${state.scheduleMode === 'scheduled' ? styles.scheduleBtnActive : ''}`}
-                                onClick={() => updateSocialPublisher({ scheduleMode: 'scheduled' })}
-                            >
-                                <Calendar size={14} /> جدولة
-                            </button>
-                        </div>
-
-                        {state.scheduleMode === 'scheduled' && (
-                            <div className={styles.scheduleInputs}>
-                                <div className={styles.scheduleField}>
-                                    <Calendar size={14} />
-                                    <input
-                                        type="date"
-                                        className="input-field"
-                                        value={state.scheduledDate}
-                                        onChange={(e) => updateSocialPublisher({ scheduledDate: e.target.value })}
-                                    />
-                                </div>
-                                <div className={styles.scheduleField}>
-                                    <Clock size={14} />
-                                    <input
-                                        type="time"
-                                        className="input-field"
-                                        value={state.scheduledTime}
-                                        onChange={(e) => updateSocialPublisher({ scheduledTime: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                        <button className={styles.bestTimesBtn} onClick={() => setShowBestTimes(!showBestTimes)}>
-                            <Sparkles size={12} /> أفضل أوقات النشر
-                            <ChevronRight size={12} className={showBestTimes ? styles.chevronOpen : ''} />
-                        </button>
-
-                        {showBestTimes && (
-                            <div className={styles.bestTimesList}>
-                                {BEST_TIMES.map((bt, i) => (
-                                    <div key={i} className={styles.bestTimeItem}>
-                                        <span className={styles.bestTimePlatform}>{bt.platform}</span>
-                                        <span className={styles.bestTimeDay}>{bt.day}</span>
-                                        <span className={styles.bestTimeHour}>{bt.time}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Publish Button */}
-                    <button
-                        className={`${styles.publishBtn} ${!canPublish ? styles.disabled : ''}`}
-                        onClick={handlePublish}
-                        disabled={!canPublish || state.isPublishing}
-                    >
-                        {state.isPublishing ? (
-                            <><Loader2 size={18} className={styles.spin} /> جاري النشر...</>
-                        ) : state.scheduleMode === 'now' ? (
-                            <><Send size={18} /> نشر الآن</>
-                        ) : (
-                            <><Calendar size={18} /> جدولة النشر</>
-                        )}
-                    </button>
-                </div>
-            </aside>
-
-            <main className={styles.workspace}>
+    const outputJSX = (
+        <>
                 {/* Tabs */}
                 <div className={styles.workspaceTabs}>
                     <button
@@ -410,7 +258,142 @@ export default function SocialPublisher() {
                         )}
                     </div>
                 )}
-            </main>
-        </div>
+        </>
+    );
+
+    return (
+        <ToolLayout
+            icon={<Send size={18} />}
+            title="Social Publisher"
+            titleAr="النشر المباشر على المنصات"
+            description="انشر محتواك مباشرة على منصات التواصل الاجتماعي. جدول المنشورات وتابع الأداء."
+            output={outputJSX}
+        >
+                    {/* Connected Accounts */}
+                    <div className={styles.sectionGroup}>
+                        <label className="label">🔗 الحسابات المربوطة</label>
+                        <div className={styles.accountsList}>
+                            {PLATFORMS.map((p) => {
+                                const account = state.accounts.find(a => a.platform === p.value);
+                                const isConnected = account?.connected || false;
+                                return (
+                                    <div key={p.value} className={`${styles.accountItem} ${isConnected ? styles.accountItemConnected : ''}`}>
+                                        <span className={styles.accountIcon}>{p.icon}</span>
+                                        <div className={styles.accountInfo}>
+                                            <span className={styles.accountName}>{p.label}</span>
+                                            {isConnected && <span className={styles.accountUsername}>{account?.username}</span>}
+                                        </div>
+                                        <button
+                                            className={`${styles.connectBtn} ${isConnected ? styles.connectBtnActive : ''}`}
+                                            onClick={() => handleConnect(p.value)}
+                                        >
+                                            {isConnected ? <><Unlink size={12} /> فصل</> : <><Link2 size={12} /> ربط</>}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Platform Selection */}
+                    <div className={styles.sectionGroup}>
+                        <label className="label">📤 اختر منصات النشر</label>
+                        <div className={styles.platformGrid}>
+                            {PLATFORMS.map((p) => {
+                                const account = state.accounts.find(a => a.platform === p.value);
+                                const isConnected = account?.connected || false;
+                                const isSelected = state.selectedPlatforms.includes(p.value);
+                                return (
+                                    <button
+                                        key={p.value}
+                                        className={`${styles.platformBtn} ${isSelected ? styles.platformBtnActive : ''}`}
+                                        onClick={() => isConnected && togglePlatform(p.value)}
+                                        disabled={!isConnected}
+                                        style={isSelected ? { borderColor: p.color, background: p.bgColor } : {}}
+                                    >
+                                        <span className={styles.platformEmoji}>{p.icon}</span>
+                                        <span>{p.label}</span>
+                                        {isSelected && <Check size={12} />}
+                                        {!isConnected && <span className={styles.platformLock}>🔒</span>}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Schedule Mode */}
+                    <div className={styles.sectionGroup}>
+                        <label className="label">⏰ وقت النشر</label>
+                        <div className={styles.scheduleToggle}>
+                            <button
+                                className={`${styles.scheduleBtn} ${state.scheduleMode === 'now' ? styles.scheduleBtnActive : ''}`}
+                                onClick={() => updateSocialPublisher({ scheduleMode: 'now' })}
+                            >
+                                <Send size={14} /> نشر فوري
+                            </button>
+                            <button
+                                className={`${styles.scheduleBtn} ${state.scheduleMode === 'scheduled' ? styles.scheduleBtnActive : ''}`}
+                                onClick={() => updateSocialPublisher({ scheduleMode: 'scheduled' })}
+                            >
+                                <Calendar size={14} /> جدولة
+                            </button>
+                        </div>
+
+                        {state.scheduleMode === 'scheduled' && (
+                            <div className={styles.scheduleInputs}>
+                                <div className={styles.scheduleField}>
+                                    <Calendar size={14} />
+                                    <input
+                                        type="date"
+                                        className="input-field"
+                                        value={state.scheduledDate}
+                                        onChange={(e) => updateSocialPublisher({ scheduledDate: e.target.value })}
+                                    />
+                                </div>
+                                <div className={styles.scheduleField}>
+                                    <Clock size={14} />
+                                    <input
+                                        type="time"
+                                        className="input-field"
+                                        value={state.scheduledTime}
+                                        onChange={(e) => updateSocialPublisher({ scheduledTime: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        <button className={styles.bestTimesBtn} onClick={() => setShowBestTimes(!showBestTimes)}>
+                            <Sparkles size={12} /> أفضل أوقات النشر
+                            <ChevronRight size={12} className={showBestTimes ? styles.chevronOpen : ''} />
+                        </button>
+
+                        {showBestTimes && (
+                            <div className={styles.bestTimesList}>
+                                {BEST_TIMES.map((bt, i) => (
+                                    <div key={i} className={styles.bestTimeItem}>
+                                        <span className={styles.bestTimePlatform}>{bt.platform}</span>
+                                        <span className={styles.bestTimeDay}>{bt.day}</span>
+                                        <span className={styles.bestTimeHour}>{bt.time}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Publish Button */}
+                    <button
+                        className={`${styles.publishBtn} ${!canPublish ? styles.disabled : ''}`}
+                        onClick={handlePublish}
+                        disabled={!canPublish || state.isPublishing}
+                    >
+                        {state.isPublishing ? (
+                            <><Loader2 size={18} className={styles.spin} /> جاري النشر...</>
+                        ) : state.scheduleMode === 'now' ? (
+                            <><Send size={18} /> نشر الآن</>
+                        ) : (
+                            <><Calendar size={18} /> جدولة النشر</>
+                        )}
+                    </button>
+        </ToolLayout>
     );
 }

@@ -7,7 +7,7 @@ import {
     X, ExternalLink, Copy, Check, Filter, Heart,
 } from 'lucide-react';
 import styles from './Templates.module.css';
-import ToolGuide from '@/components/shared/ToolGuide';
+import ToolLayout from '@/components/shared/ToolLayout';
 
 const CATEGORIES = ['الكل', 'سوشيال ميديا', 'إعلانات', 'بطاقات أعمال', 'قوائم طعام', 'عروض تقديمية', 'قصص'];
 
@@ -66,36 +66,8 @@ export default function Templates() {
         return TEMPLATES.filter(t => t.category === cat).length;
     };
 
-    return (
-        <div className={styles.layout}>
-            <div className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <LayoutGrid size={22} className={styles.headerIcon} />
-                    <div>
-                        <h1>مكتبة القوالب</h1>
-                        <p>قوالب جاهزة لجميع احتياجاتك التسويقية</p>
-                    </div>
-                </div>
-                <div className={styles.headerRight}>
-                    <div className={styles.searchWrap}>
-                        <Search size={16} />
-                        <input placeholder="ابحث عن قالب..." value={search} onChange={e => setSearch(e.target.value)} />
-                    </div>
-                    <span className={styles.resultCount}>{filtered.length} قالب</span>
-                </div>
-            </div>
-
-            <ToolGuide
-                    title="مكتبة القوالب"
-                    description="تصفح مكتبة القوالب الجاهزة واستخدمها كنقطة انطلاق لتصاميمك. قوالب متنوعة لجميع المنصات والأغراض."
-                    steps={[
-                        'تصفح القوالب المتاحة حسب الفئة',
-                        'اختر القالب المناسب لمشروعك',
-                        'خصص القالب حسب احتياجاتك',
-                        'احفظ التصميم أو انقله لأداة أخرى',
-                    ]}
-                />
-
+    const outputJSX = (
+        <>
             <div className={styles.categories}>
                 {CATEGORIES.map(cat => (
                     <button key={cat}
@@ -186,6 +158,24 @@ export default function Templates() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
+    );
+
+    return (
+        <ToolLayout
+            icon={<LayoutGrid size={18} />}
+            title="مكتبة القوالب"
+            titleAr="Templates"
+            description="اختر من مكتبة قوالب جاهزة ومصممة باحتراف. خصصها حسب احتياجاتك."
+            output={outputJSX}
+        >
+                <div className={styles.headerRight}>
+                    <div className={styles.searchWrap}>
+                        <Search size={16} />
+                        <input placeholder="ابحث عن قالب..." value={search} onChange={e => setSearch(e.target.value)} />
+                    </div>
+                    <span className={styles.resultCount}>{filtered.length} قالب</span>
+                </div>
+        </ToolLayout>
     );
 }
