@@ -383,6 +383,16 @@
   color: var(--text-muted);
 }
 
+.notifEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  font-size: 12px;
+  color: #64748b;
+}
+
 /* Profile Button */
 .profileWrap {
   position: relative;

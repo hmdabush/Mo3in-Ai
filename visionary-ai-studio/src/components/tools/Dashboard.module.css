@@ -56,22 +56,23 @@
 }
 
 .greetingEmoji {
-    font-size: 36px;
+    font-size: 24px;
     line-height: 1;
 }
 
-.greeting h1 {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-    letter-spacing: -0.3px;
+.greetingText {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+    letter-spacing: -0.2px;
 }
 
-.greeting p {
-    font-size: 14px;
-    color: var(--text-tertiary);
+.greetingSub {
+    font-size: 12px;
+    color: #64748b;
     font-weight: 400;
+    margin: 2px 0 0;
 }
 
 .heroActions {

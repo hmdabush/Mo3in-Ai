@@ -69,8 +69,8 @@ export default function Dashboard() {
                     <div className={styles.greeting}>
                         <span className={styles.greetingEmoji}>{getGreetingEmoji()}</span>
                         <div>
-                            <span style={{ fontSize: '16px', fontWeight: 600, color: '#e2e8f0' }}>{getGreeting()}</span>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>ماذا ستبتكر اليوم؟</p>
+                            <h1 className={styles.greetingText}>{getGreeting()}</h1>
+                            <p className={styles.greetingSub}>ماذا ستبتكر اليوم؟</p>
                         </div>
                     </div>
                 </div>

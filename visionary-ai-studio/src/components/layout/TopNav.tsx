@@ -134,26 +134,9 @@ export default function TopNav() {
           {showNotifications && (
             <div className={styles.notifDropdown}>
               <div className={styles.notifHeader}>الإشعارات</div>
-              <div className={styles.notifItem}>
-                <div className={styles.notifDotSmall} style={{ background: '#10B981' }} />
-                <div className={styles.notifContent}>
-                  <span>تم نشر البوست بنجاح</span>
-                  <span className={styles.notifTime}>منذ 5 دقائق</span>
-                </div>
-              </div>
-              <div className={styles.notifItem}>
-                <div className={styles.notifDotSmall} style={{ background: '#8B5CF6' }} />
-                <div className={styles.notifContent}>
-                  <span>تم توليد 4 تصاميم جديدة</span>
-                  <span className={styles.notifTime}>منذ ساعة</span>
-                </div>
-              </div>
-              <div className={styles.notifItem}>
-                <div className={styles.notifDotSmall} style={{ background: '#F59E0B' }} />
-                <div className={styles.notifContent}>
-                  <span>اقتربت من حد الاستخدام (80%)</span>
-                  <span className={styles.notifTime}>منذ 3 ساعات</span>
-                </div>
+              <div className={styles.notifEmpty}>
+                <Bell size={20} style={{ color: '#475569' }} />
+                <span>لا توجد إشعارات جديدة</span>
               </div>
             </div>
           )}
