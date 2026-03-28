@@ -38,24 +38,6 @@ const AI_MODELS = [
     { value: 'flux', label: 'Flux' },
 ];
 
-const DUMMY_PROMPT = `A professional product photograph of a sleek, matte-black wireless earbuds case resting on a smooth marble surface. The scene is lit with soft, diffused natural light coming from the upper-left at approximately 45 degrees, creating gentle shadows and subtle highlights on the product's curved surfaces.
-
-Camera: Sony A7R IV with a 90mm macro lens at f/2.8, creating a shallow depth of field with a beautifully blurred background. The focus is tack-sharp on the product logo.
-
-Environment: Minimalist studio setting with a gradient backdrop transitioning from warm cream to soft white. A single eucalyptus leaf is placed casually in the background for organic contrast.
-
-Color Palette: Dominant blacks and charcoals of the product against warm neutral tones. Subtle golden reflection on the marble surface adds warmth.
-
-Post-Processing: Adobe Lightroom adjustments — slight clarity boost (+15), dehaze (+10), split toning with warm highlights and cool shadows. Final output maintains a clean, premium advertising aesthetic suitable for social media and e-commerce platforms.
-
-Style Reference: Apple-inspired minimalist product photography with a touch of Scandinavian design aesthetics. High-end commercial look with attention to material textures and surface reflections.`;
-
-const DUMMY_VARIATIONS = [
-    `Product shot on dark obsidian surface, dramatic side-lighting with sharp shadows. Camera: 85mm f/1.4, shallow DOF. Mood: mysterious, high-end. Post: high contrast, desaturated with teal highlights.`,
-    `Floating product on pure white infinity curve, soft ring light from above. Camera: 100mm macro f/4, focus stacking. Mood: clean, clinical precision. Post: overexposed whites, minimal shadows.`,
-    `Product in natural environment — wooden table by window, golden hour light streaming in. Camera: 35mm f/2, environmental context. Mood: warm, inviting, lifestyle. Post: warm tones, film grain.`,
-];
-
 export default function PromptEngineer() {
     const project = useAppStore((s) => s.getActiveProject());
     const updatePrompt = useAppStore((s) => s.updatePrompt);
@@ -86,24 +68,26 @@ export default function PromptEngineer() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     tool: 'prompt-engineer',
-                    systemPrompt: `You are an expert AI image prompt engineer. You specialize in crafting highly detailed, professional prompts for AI image generation models like Midjourney, DALL-E 3, Stable Diffusion, and Flux. Always respond in JSON format only with no additional text.`,
-                    prompt: `Generate a detailed, professional AI image generation prompt with the following parameters:
-- Template: ${templateLabel}
+                    systemPrompt: `You are the world's leading AI image prompt engineer with deep expertise in Midjourney v6, DALL-E 3, Stable Diffusion XL, and Flux Pro. You understand the nuances of each model's prompt syntax, weight systems, and style triggers. You craft prompts that consistently produce award-winning, commercially viable images. Your prompts include precise technical photography parameters, artistic direction, and model-specific optimizations. Always respond in JSON format only with no additional text.`,
+                    prompt: `Generate a masterclass-level AI image generation prompt with the following parameters:
+- Template Category: ${templateLabel}
 - Target AI Model: ${modelLabel}
-- Style Tags: ${styleLabels}
-- User Instructions: ${state.instructions || 'Generate a high-quality prompt based on the template and styles'}
+- Style Direction: ${styleLabels}
+- User Vision: ${state.instructions || 'Generate a high-quality, commercially viable prompt based on the template and styles'}
 
-Return a JSON object (no text before or after) in this format:
+Return a JSON object (no text before or after) in this exact format:
 {
-  "mainPrompt": "A very detailed prompt (200+ words) describing the scene, lighting, camera, lens, color palette, composition, post-processing, and style references. Be extremely specific about technical details.",
+  "mainPrompt": "An extremely detailed prompt (300+ words) that includes: 1) Subject description with precise details, 2) Environment/setting with atmospheric details, 3) Lighting setup (key light, fill light, rim light, practical lights), 4) Camera specifications (exact lens mm, f-stop, ISO, shutter speed, sensor format), 5) Color palette with specific hex codes, 6) Composition technique (rule of thirds, golden ratio, leading lines), 7) Texture and material descriptions, 8) Post-processing pipeline (color grading, tone mapping, sharpening), 9) Art direction references (specific photographers, art movements, film looks), 10) Model-specific syntax and parameters for ${modelLabel}",
+  "negativePrompt": "A comprehensive negative prompt to avoid common AI artifacts and unwanted elements",
   "variations": [
-    "Variation 1: Same subject but different lighting/mood/angle (100+ words)",
-    "Variation 2: Same subject but different environment/setting (100+ words)",
-    "Variation 3: Same subject but different artistic style/post-processing (100+ words)"
-  ]
+    "Variation 1: Same subject, dramatically different lighting - describe a complete alternative lighting setup with mood shift (150+ words)",
+    "Variation 2: Same subject, completely different environment/context - new setting with atmospheric details (150+ words)",
+    "Variation 3: Same subject, different artistic interpretation - new style, post-processing, and art direction (150+ words)"
+  ],
+  "modelTips": "3-5 specific tips for getting the best results with ${modelLabel} for this type of image"
 }
 
-Make the main prompt extremely detailed with specific camera settings (lens mm, f-stop, ISO), lighting setup, color palette hex codes, post-processing steps, and style references.`,
+Critical: Every detail must be specific and actionable. No vague descriptions like 'beautiful' or 'nice' - use precise technical and artistic terminology.`,
                     maxTokens: 3000,
                 }),
             });
@@ -111,15 +95,15 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
             if (!res.ok) throw new Error('API request failed');
             const data = await res.json();
 
-            let mainPrompt = DUMMY_PROMPT;
-            let vars = DUMMY_VARIATIONS;
+            let mainPrompt = '';
+            let vars: string[] = [];
 
             try {
                 const text = data.text.trim();
                 const jsonMatch = text.match(/\{[\s\S]*\}/);
                 const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
-                mainPrompt = parsed.mainPrompt || DUMMY_PROMPT;
-                vars = parsed.variations || DUMMY_VARIATIONS;
+                mainPrompt = parsed.mainPrompt || '';
+                vars = parsed.variations || [];
             } catch {
                 console.error('Failed to parse prompt response:', data.text);
             }
@@ -134,14 +118,9 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
             setShowVariations(true);
         } catch (error) {
             console.error('Generation error:', error);
-            const timestamp = new Date().toLocaleTimeString();
-            updatePrompt({
-                isGenerating: false,
-                generatedPrompt: DUMMY_PROMPT,
-                promptHistory: [{ prompt: DUMMY_PROMPT, timestamp }, ...state.promptHistory],
-            });
-            setVariations(DUMMY_VARIATIONS);
-            setShowVariations(true);
+            updatePrompt({ isGenerating: false, generatedPrompt: '' });
+            setVariations([]);
+            setShowVariations(false);
         }
     }, [updatePrompt, state.promptHistory, state.instructions, selectedTemplate, targetModel, selectedStyles]);
 

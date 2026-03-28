@@ -38,18 +38,6 @@ const PLATFORM_OPTIONS = [
     { value: 'linkedin', label: 'LinkedIn' },
 ];
 
-const DUMMY_POSTS = [
-    { text: '\u064a\u0627 \u062c\u0645\u0627\u0639\u0629 \u0627\u0644\u0645\u0648\u0636\u0648\u0639 \u0645\u0634 \u0647\u0632\u0627\u0631! \u0627\u0644\u0645\u0646\u062a\u062c \u062f\u0647 \u063a\u064a\u0651\u0631 \u062d\u064a\u0627\u062a\u064a \u0628\u0627\u0644\u0643\u0627\u0645\u0644. \u062c\u0631\u0628\u0648\u0647 \u0648\u0627\u062f\u0639\u0648\u0644\u064a ', visualIdea: 'Before/after split image with vibrant colors', hashtags: ['#\u062a\u062c\u0631\u0628\u062a\u064a', '#\u0645\u0646\u062a\u062c_\u0639\u0638\u064a\u0645', '#\u0645\u0635\u0631'], platform: 'instagram', bestTime: '7:00 PM' },
-    { text: '\u0645\u064a\u0646 \u0642\u0627\u0644 \u0625\u0646 \u0627\u0644\u062c\u0648\u062f\u0629 \u0644\u0627\u0632\u0645 \u062a\u0643\u0648\u0646 \u063a\u0627\u0644\u064a\u0629\u061f \u0625\u062d\u0646\u0627 \u0643\u0633\u0631\u0646\u0627 \u0627\u0644\u0642\u0627\u0639\u062f\u0629 ', visualIdea: 'Product showcase with price tag reveal animation', hashtags: ['#\u0639\u0631\u0636', '#\u062c\u0648\u062f\u0629', '#\u0623\u0641\u0636\u0644_\u0633\u0639\u0631'], platform: 'facebook', bestTime: '12:00 PM' },
-    { text: '\u0627\u0644\u0646\u0627\u0633 \u0628\u062a\u0633\u0623\u0644 \u0639\u0646 \u0627\u0644\u0633\u0631... \u0647\u0642\u0648\u0644\u0643\u0645! \u0627\u0644\u0633\u0631 \u0641\u064a \u0627\u0644\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0635\u063a\u064a\u0631\u0629 ', visualIdea: 'Macro close-up of product details with text overlay', hashtags: ['#\u0627\u0644\u0633\u0631', '#\u062a\u0641\u0627\u0635\u064a\u0644', '#\u0635\u0646\u0627\u0639\u0629_\u0645\u062a\u0642\u0646\u0629'], platform: 'instagram', bestTime: '9:00 PM' },
-    { text: '\u0644\u064a\u0647 \u062a\u0634\u062a\u0631\u064a \u062a\u0642\u0644\u064a\u062f \u0644\u0645\u0627 \u0627\u0644\u0623\u0635\u0644\u064a \u0639\u0646\u062f\u0643 \u0628\u0633\u0639\u0631 \u0644\u0627 \u064a\u064f\u0635\u062f\u0642\u061f ', visualIdea: 'Side-by-side comparison with checkmark animations', hashtags: ['#\u0627\u0644\u0623\u0635\u0644\u064a', '#\u0645\u0642\u0627\u0631\u0646\u0629', '#\u0642\u064a\u0645\u0629'], platform: 'tiktok', bestTime: '8:00 PM' },
-    { text: '\u0631\u062f\u0648\u062f \u0641\u0639\u0644 \u0627\u0644\u0646\u0627\u0633 \u0644\u0645\u0627 \u062c\u0631\u0628\u0648\u0627 \u0627\u0644\u0645\u0646\u062a\u062c \u0623\u0648\u0644 \u0645\u0631\u0629 ', visualIdea: 'Customer reaction collage with star ratings', hashtags: ['#\u062a\u0642\u064a\u064a\u0645\u0627\u062a', '#\u0639\u0645\u0644\u0627\u0621', '#\u0622\u0631\u0627\u0621'], platform: 'instagram', bestTime: '6:00 PM' },
-    { text: '\u0627\u0644\u0639\u0631\u0636 \u062f\u0647 \u0645\u0634 \u0647\u064a\u062a\u0643\u0631\u0631! \u0622\u062e\u0631 24 \u0633\u0627\u0639\u0629 \u0627\u0637\u0644\u0628 \u062f\u0644\u0648\u0642\u062a\u064a!', visualIdea: 'Countdown timer design with urgency colors (red/orange)', hashtags: ['#\u0639\u0631\u0636_\u0645\u062d\u062f\u0648\u062f', '#\u0627\u0637\u0644\u0628_\u0627\u0644\u0622\u0646', '#\u062e\u0635\u0645'], platform: 'facebook', bestTime: '10:00 AM' },
-    { text: '\u0634\u0648\u0641\u0648\u0627 \u0627\u0644\u062a\u0642\u064a\u064a\u0645\u0627\u062a! 4.9 \u0645\u0646 5 \u0645\u0634 \u0645\u0646 \u0641\u0631\u0627\u063a!', visualIdea: 'Review highlights with 5-star visual treatment', hashtags: ['#\u062a\u0642\u064a\u064a\u0645', '#\u062e\u0645\u0633_\u0646\u062c\u0648\u0645', '#\u0627\u0644\u0623\u0641\u0636\u0644'], platform: 'twitter', bestTime: '1:00 PM' },
-    { text: '\u062d\u0627\u062c\u0629 \u0648\u0627\u062d\u062f\u0629 \u0628\u0633 \u0646\u062f\u0645\u062a \u0639\u0644\u064a\u0647\u0627... \u0625\u0646\u064a \u0645\u0627 \u062c\u0631\u0628\u062a\u0647\u0627 \u0628\u062f\u0631\u064a ', visualIdea: 'Testimonial style with emotional color palette', hashtags: ['#\u0634\u0647\u0627\u062f\u0629', '#\u0646\u062f\u0645', '#\u062a\u062c\u0631\u0628\u0629'], platform: 'tiktok', bestTime: '5:00 PM' },
-    { text: '\u0627\u0644\u062e\u0644\u0627\u0635\u0629: \u0645\u0646\u062a\u062c \u064a\u0633\u062a\u0627\u0647\u0644 \u0643\u0644 \u0642\u0631\u0634. \u0644\u064a\u0646\u0643 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a \u0627\u0644\u0628\u0627\u064a\u0648 ', visualIdea: 'CTA design with arrow pointing to bio link', hashtags: ['#\u0627\u0637\u0644\u0628_\u0627\u0644\u0622\u0646', '#\u0644\u064a\u0646\u0643_\u0627\u0644\u0628\u0627\u064a\u0648', '#CTA'], platform: 'instagram', bestTime: '8:00 PM' },
-];
-
 export default function Plan() {
     const project = useAppStore((s) => s.getActiveProject());
     const updatePlan = useAppStore((s) => s.updatePlan);
@@ -74,26 +62,37 @@ export default function Plan() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     tool: 'plan',
-                    systemPrompt: `أنت خبير تسويق رقمي ومتخصص في السوشيال ميديا للسوق العربي. أنشئ محتوى إبداعي وجذاب يناسب الجمهور المستهدف. أجب دائماً بصيغة JSON فقط بدون أي نص إضافي.`,
-                    prompt: `أنشئ ${postCount} بوست لحملة سوشيال ميديا بالمواصفات التالية:
+                    systemPrompt: `أنت خبير تسويق رقمي ومتخصص في السوشيال ميديا للسوق العربي والخليجي. لديك خبرة 15 سنة في إدارة الحملات الإعلانية وصناعة المحتوى الفيروسي. تعرف خوارزميات كل منصة وأفضل ممارسات كتابة المحتوى الذي يحقق أعلى تفاعل. أجب دائماً بصيغة JSON فقط بدون أي نص إضافي.`,
+                    prompt: `أنشئ ${postCount} بوست احترافي لحملة سوشيال ميديا بالمواصفات التالية:
 - هدف الحملة: ${state.campaignGoal}
 - السوق المستهدف: ${marketLabel}
 - اللغة/اللهجة: ${langLabel}
 - الأسلوب: ${styleLabel}
 - المنصة الرئيسية: ${platformLabel}
 
+## قواعد كتابة المحتوى الاحترافي:
+1. ابدأ كل بوست بـ "هوك" (خطاف) قوي يجذب الانتباه في أول 3 ثوانٍ
+2. استخدم أسلوب القصص (Storytelling) كلما أمكن
+3. اجعل كل بوست يحتوي على CTA واضح ومباشر
+4. نوّع بين أنماط البوستات: سؤال، قصة، إحصائية، نصيحة، قبل/بعد، رأي جريء
+5. الهاشتاقات يجب أن تكون مزيج من شائعة (100K+) ومتخصصة (نيش)
+6. وقت النشر يجب أن يكون بناءً على بيانات حقيقية لنشاط الجمهور في ${marketLabel}
+7. اكتب بلهجة ${langLabel} أصيلة وطبيعية - كأنك شخص حقيقي من المنطقة
+8. حجم النص يناسب المنصة: ${platformLabel === 'Twitter' ? 'أقل من 280 حرف' : platformLabel === 'Instagram' ? '150-300 كلمة مع فواصل أسطر' : platformLabel === 'TikTok' ? 'قصير ومؤثر 50-100 كلمة' : platformLabel === 'LinkedIn' ? 'مهني ومفصل 200-400 كلمة' : '100-200 كلمة'}
+
 أرجع النتيجة كـ JSON array بالشكل التالي (بدون أي نص قبله أو بعده):
 [
   {
-    "text": "نص البوست كامل باللهجة المطلوبة",
-    "visualIdea": "وصف تفصيلي بالإنجليزي للتصميم المرئي المقترح",
-    "hashtags": ["#هاشتاق1", "#هاشتاق2", "#هاشتاق3"],
+    "text": "نص البوست كامل باللهجة المطلوبة مع إيموجي مناسبة",
+    "visualIdea": "وصف تفصيلي بالإنجليزي للتصميم المرئي المقترح يتضمن: الألوان، التكوين، نوع الصورة (فوتو/جرافيك/فيديو)، الخط المستخدم",
+    "hashtags": ["#هاشتاق1", "#هاشتاق2", "#هاشتاق3", "#هاشتاق4", "#هاشتاق5"],
     "platform": "${platform}",
-    "bestTime": "أفضل وقت للنشر"
+    "bestTime": "أفضل وقت للنشر مع السبب",
+    "postType": "نوع البوست: سؤال/قصة/إحصائية/نصيحة/عرض/رأي"
   }
 ]
 
-مهم: استخدم اللهجة ${langLabel} بشكل طبيعي وأصيل. اكتب محتوى إبداعي حقيقي مناسب للمنصة.`,
+مهم جداً: اكتب محتوى إبداعي حقيقي يمكن نشره مباشرة. لا تكتب محتوى عام أو مكرر.`,
                     maxTokens: 4096,
                 }),
             });
@@ -110,17 +109,13 @@ export default function Plan() {
                 posts = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
             } catch {
                 console.error('Failed to parse posts:', data.text);
-                // Fallback to dummy posts
-                posts = DUMMY_POSTS.slice(0, parseInt(postCount));
+                posts = [];
             }
 
             updatePlan({ isGenerating: false, generatedPosts: posts });
         } catch (error) {
             console.error('Generation error:', error);
-            // Fallback to dummy data on error
-            const count = parseInt(postCount);
-            const posts = DUMMY_POSTS.slice(0, Math.min(count, DUMMY_POSTS.length));
-            updatePlan({ isGenerating: false, generatedPosts: posts });
+            updatePlan({ isGenerating: false, generatedPosts: [] });
         }
     }, [updatePlan, postCount, state.targetMarket, state.language, state.style, state.campaignGoal, platform]);
 

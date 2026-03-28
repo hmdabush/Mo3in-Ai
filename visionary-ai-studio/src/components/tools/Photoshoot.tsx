@@ -68,7 +68,7 @@ export default function Photoshoot() {
 
             for (const shot of state.selectedShots) {
                 const shotLabel = SHOT_TYPES.find(s => s.value === shot)?.label || shot;
-                const prompt = `Professional product photography, ${shotLabel} shot. Lighting: ${lightLabel}. Background: ${bgLabel}. ${state.stylePrompt || 'Clean, commercial product photo'}. Ultra high quality, studio photography, 8K.`;
+                const prompt = `Professional commercial product photography, ${shotLabel} shot composition. Lighting: ${lightLabel} lighting setup with professional studio equipment, softbox and reflectors for even illumination. Background: seamless ${bgLabel} backdrop. ${state.stylePrompt || 'Clean, polished commercial product photograph suitable for e-commerce listing and marketing materials'}. Camera: Canon EOS R5 with 100mm macro lens, f/4, ISO 100. Post-production: color-corrected, retouched, commercial-grade output. Ultra high quality, 8K resolution, photorealistic studio photography.`;
 
                 const res = await fetch('/api/generate-image', {
                     method: 'POST',
@@ -79,14 +79,12 @@ export default function Photoshoot() {
                 if (!res.ok) throw new Error('Image generation failed');
                 const data = await res.json();
                 if (data.images?.[0]) allImages.push(data.images[0]);
-                else allImages.push(`https://picsum.photos/seed/photo${Date.now()}/600/600`);
             }
 
             updatePhotoshoot({ isGenerating: false, generatedImages: allImages });
         } catch (error) {
             console.error('Photoshoot error:', error);
-            const imgs = state.selectedShots.map((_, i) => `https://picsum.photos/seed/photo${i}${Date.now()}/600/600`);
-            updatePhotoshoot({ isGenerating: false, generatedImages: imgs });
+            updatePhotoshoot({ isGenerating: false, generatedImages: [] });
         }
     }, [state.selectedShots, state.stylePrompt, updatePhotoshoot, lighting, bgPreset]);
 

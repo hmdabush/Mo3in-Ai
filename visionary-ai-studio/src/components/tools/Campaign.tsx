@@ -51,7 +51,16 @@ export default function Campaign() {
 
             for (let i = 0; i < 6; i++) {
                 const step = FUNNEL_STEPS[i];
-                const prompt = `Social media marketing post design for ${step} stage. Theme: ${state.designTheme}. Mood: ${moodLabel}. Platform: ${selectedPlatforms[0] || 'Instagram'}. Professional social media ad design, ${moodLabel} aesthetic, high quality graphic design, modern layout.`;
+                const stepDescriptions: Record<string, string> = {
+                    'Awareness': 'Eye-catching brand introduction, bold typography, vibrant colors, pattern of brand colors in background',
+                    'Interest': 'Product showcase with lifestyle context, elegant composition, benefit-focused text overlay',
+                    'Desire': 'Emotional storytelling visual, close-up product detail, premium feel, golden/warm accents',
+                    'Social Proof': 'Customer testimonial layout, star ratings, review quotes, trust badges, real-looking profile photos',
+                    'Urgency': 'Limited time offer design, countdown visual, bold red/orange accents, flash sale typography',
+                    'Conversion': 'Clear CTA button design, simple clean layout, arrow pointing to action, promotional code highlight',
+                };
+                const stepDesc = stepDescriptions[step] || 'Professional marketing visual';
+                const prompt = `Professional social media marketing post for ${selectedPlatforms[0] || 'Instagram'}. Campaign stage: ${step}. ${stepDesc}. Theme: ${state.designTheme}. Visual mood: ${moodLabel} aesthetic. Requirements: Clean modern graphic design, proper text hierarchy, brand-consistent colors, high contrast for mobile viewing, no placeholder text - use Arabic text if needed. Square format 1:1 ratio, ready for social media posting. Ultra high quality, 4K resolution.`;
 
                 const res = await fetch('/api/generate-image', {
                     method: 'POST',
@@ -62,14 +71,13 @@ export default function Campaign() {
                 if (!res.ok) throw new Error('Image generation failed');
                 const data = await res.json();
                 if (data.images?.[0]) allImages.push(data.images[0]);
-                else allImages.push(`https://picsum.photos/seed/camp${i}${Date.now()}/600/600`);
+                // Skip failed images
             }
 
             updateCampaign({ isGenerating: false, generatedPosts: allImages });
         } catch (error) {
             console.error('Campaign generation error:', error);
-            const posts = Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/camp${i}${Date.now()}/600/600`);
-            updateCampaign({ isGenerating: false, generatedPosts: posts });
+            updateCampaign({ isGenerating: false, generatedPosts: [] });
         }
     }, [updateCampaign, state.designTheme, state.moodPreset, selectedPlatforms]);
 

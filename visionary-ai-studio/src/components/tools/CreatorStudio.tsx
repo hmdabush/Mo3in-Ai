@@ -11,18 +11,6 @@ import {
 import styles from './CreatorStudio.module.css';
 import ToolLayout from '@/components/shared/ToolLayout';
 
-const DUMMY_IMAGES = [
-    'https://picsum.photos/seed/vis1/400/400',
-    'https://picsum.photos/seed/vis2/400/400',
-    'https://picsum.photos/seed/vis3/400/400',
-    'https://picsum.photos/seed/vis4/400/400',
-    'https://picsum.photos/seed/vis5/400/400',
-    'https://picsum.photos/seed/vis6/400/400',
-    'https://picsum.photos/seed/vis7/400/400',
-    'https://picsum.photos/seed/vis8/400/400',
-    'https://picsum.photos/seed/vis9/400/400',
-];
-
 const LIGHTING_OPTIONS = [
     { value: 'natural', label: 'Natural Light' },
     { value: 'studio', label: 'Studio Light' },
@@ -97,7 +85,7 @@ export default function CreatorStudio() {
             const angleLabel = ANGLE_OPTIONS.find(a => a.value === state.angle)?.label || state.angle;
             const bgLabel = BACKGROUND_PRESETS.find(b => b.value === selectedBg)?.label || selectedBg;
 
-            const prompt = `Professional ${styleLabel} product photography. ${state.visionPrompt || 'High-end commercial product shot'}. Lighting: ${lightLabel}. Camera angle: ${angleLabel}. Background: ${bgLabel}. Ultra high quality, 8K resolution, professional studio photography.`;
+            const prompt = `Professional ${styleLabel} product photography of a commercial product. ${state.visionPrompt || 'High-end commercial product shot, clean and elegant'}. Lighting setup: ${lightLabel} lighting with subtle fill light to eliminate harsh shadows. Camera: shot from ${angleLabel} perspective using a 85mm f/2.8 lens for perfect product isolation. Background: ${bgLabel} surface/backdrop, seamless and distraction-free. Post-processing: color-corrected, sharpened, commercial-grade retouching. Style: magazine-quality advertising photography, suitable for e-commerce and social media. Ultra high quality, 8K resolution, photorealistic.`;
 
             const allImages: string[] = [];
             const batchCount = Math.ceil(variationCount / 4);
@@ -119,13 +107,13 @@ export default function CreatorStudio() {
 
             updateCreatorStudio({
                 isGenerating: false,
-                generatedImages: allImages.length > 0 ? allImages : DUMMY_IMAGES.slice(0, variationCount),
+                generatedImages: allImages,
             });
         } catch (error) {
             console.error('Image generation error:', error);
             updateCreatorStudio({
                 isGenerating: false,
-                generatedImages: DUMMY_IMAGES.slice(0, variationCount),
+                generatedImages: [],
             });
         }
     }, [updateCreatorStudio, variationCount, selectedStyle, state.lighting, state.angle, state.visionPrompt, selectedBg]);

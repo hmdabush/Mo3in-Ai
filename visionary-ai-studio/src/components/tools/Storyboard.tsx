@@ -31,8 +31,6 @@ const SCENE_DESCRIPTIONS = [
     'Brand logo, tagline, and contact info',
 ];
 
-const DUMMY_SCENES = Array.from({ length: 9 }, (_, i) => `https://picsum.photos/seed/story${i}/600/400`);
-
 const GENRE_OPTIONS = [
     { value: 'commercial', label: 'Commercial Ad' },
     { value: 'social', label: 'Social Media' },
@@ -61,7 +59,7 @@ export default function Storyboard() {
             for (let i = 0; i < 9; i++) {
                 const sceneTitle = SCENE_TITLES[i];
                 const sceneDesc = SCENE_DESCRIPTIONS[i];
-                const prompt = `Cinematic storyboard frame for a ${genreLabel} video ad. Scene ${i + 1}: ${sceneTitle} - ${sceneDesc}. Story: ${state.storyVision}. Aspect ratio ${state.aspectRatio}. Professional storyboard art style, cinematic composition, dramatic lighting, film production quality.`;
+                const prompt = `Cinematic storyboard frame ${i + 1} of 9 for a ${genreLabel} video advertisement. Scene: "${sceneTitle}" - ${sceneDesc}. Story context: ${state.storyVision}. Visual requirements: ${state.aspectRatio} aspect ratio, cinematic film-quality composition with rule of thirds, dramatic depth of field, professional color grading with teal-orange cinema palette. Lighting: motivated practical lighting with volumetric atmosphere. Style: high-end film production storyboard, photorealistic rendering quality, Hollywood-grade visual storytelling. Each frame should feel like a screenshot from a premium video advertisement.`;
 
                 const res = await fetch('/api/generate-image', {
                     method: 'POST',
@@ -76,13 +74,12 @@ export default function Storyboard() {
                 if (!res.ok) throw new Error('Scene generation failed');
                 const data = await res.json();
                 if (data.images?.[0]) allScenes.push(data.images[0]);
-                else allScenes.push(`https://picsum.photos/seed/story${i}/600/400`);
             }
 
             updateStoryboard({ isGenerating: false, generatedScenes: allScenes });
         } catch (error) {
             console.error('Storyboard generation error:', error);
-            updateStoryboard({ isGenerating: false, generatedScenes: DUMMY_SCENES });
+            updateStoryboard({ isGenerating: false, generatedScenes: [] });
         }
     }, [updateStoryboard, state.storyVision, state.aspectRatio, genre]);
 

@@ -112,7 +112,7 @@ function buildWebsitePrompt(params: PromptParams): string {
   const siteType = SITE_TYPE_MAP[params.siteType] || params.siteType;
   const sections = params.selectedPages.map(p => SECTION_MAP[p] || p).join('\n  - ');
 
-  return `أنت مصمم ومطور ويب محترف. مطلوب منك إنشاء موقع إلكتروني كامل بملف HTML واحد.
+  return `أنت مصمم ومطور ويب محترف من الطراز العالمي، متخصص في تصميم المواقع العربية الحديثة. لديك خبرة في تصميم مواقع حائزة على جوائز دولية.
 
 ## معلومات المشروع:
 - **اسم الموقع:** ${params.siteName}
@@ -131,26 +131,35 @@ function buildWebsitePrompt(params: PromptParams): string {
 ## الأقسام المطلوبة:
   - ${sections}
 
-## المتطلبات الفنية:
+## المتطلبات الفنية المتقدمة:
 1. أنشئ ملف HTML واحد كامل يحتوي على كل الـ CSS مدمج (inline styles في <style>)
-2. استخدم خط Cairo من Google Fonts
-3. تأكد أن التصميم متجاوب (responsive) يعمل على الموبايل والتابلت والديسكتوب
-4. أضف تأثيرات حركية (animations) ناعمة وحديثة
-5. استخدم الـ RTL direction للغة العربية
-6. اجعل التصميم فاخر واحترافي مع:
-   - تدرجات لونية (gradients) 
-   - تأثيرات زجاجية (glassmorphism) إذا مناسب
-   - ظلال (shadows) ناعمة
-   - تأثيرات hover تفاعلية
-   - أيقونات SVG بسيطة (ارسمها بنفسك)
-7. اكتب محتوى واقعي ومناسب للنشاط (ليس نص lorem ipsum)
-8. أضف إحصائيات وأرقام مناسبة
-9. اجعل الأزرار والروابط تفاعلية (smooth scroll لأقسام الصفحة)
+2. استخدم خط Cairo من Google Fonts مع أوزان متعددة (400, 600, 700, 900)
+3. تصميم متجاوب 100% (responsive) مع breakpoints لـ: mobile (320px-480px), tablet (481px-768px), desktop (769px+)
+4. أضف CSS animations متقدمة:
+   - Scroll-triggered animations باستخدام IntersectionObserver
+   - Smooth hover transitions على جميع العناصر التفاعلية
+   - Loading animations ناعمة
+   - Counter animations للأرقام والإحصائيات
+5. استخدم RTL direction مع تنسيق عربي احترافي
+6. تصميم فاخر واحترافي يتضمن:
+   - تدرجات لونية (gradients) متناسقة مع لوحة الألوان
+   - تأثيرات زجاجية (glassmorphism) مع backdrop-filter
+   - ظلال (box-shadow) متعددة الطبقات
+   - أيقونات SVG inline مرسومة بدقة (لا تستخدم مكتبات خارجية)
+   - Micro-interactions على الأزرار والروابط
+7. اكتب محتوى واقعي ومقنع بالعربي مناسب تماماً لنوع النشاط
+8. أضف إحصائيات وأرقام واقعية ومناسبة
+9. أزرار وروابط تفاعلية مع smooth scroll
+10. Navigation bar ثابت مع تأثير blur عند التمرير
+11. استخدم CSS Grid و Flexbox للتخطيطات المعقدة
+12. أضف حالات hover مميزة لجميع العناصر القابلة للنقر
+13. Footer شامل مع روابط، معلومات تواصل، وحقوق نشر
 
 ## تنبيه مهم:
 - أرسل الكود HTML الكامل فقط، بدون أي شرح أو تعليق قبله أو بعده
 - ابدأ مباشرة بـ <!DOCTYPE html> وانتهي بـ </html>
-- لا تضع الكود في code block أو backticks`;
+- لا تضع الكود في code block أو backticks
+- تأكد أن الكود يعمل بشكل كامل عند فتحه في أي متصفح`;
 }
 
 function extractHtml(text: string): string {
