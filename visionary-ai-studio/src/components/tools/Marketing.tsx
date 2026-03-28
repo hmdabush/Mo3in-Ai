@@ -937,9 +937,8 @@ Make the analysis specific to the ${state.industry} industry and ${state.brandNa
             }
             return (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><BarChart3 size={48} /></div>
-                    <h3>Strategic Analysis Engine</h3>
-                    <p>Enter your brand details to generate a comprehensive<br />marketing strategy with 8 professional analysis cards</p>
+                    <div className={styles.emptyIcon}><BarChart3 size={40} /></div>
+                    <p>ستظهر النتائج هنا بعد التحليل</p>
                 </div>
             );
         }

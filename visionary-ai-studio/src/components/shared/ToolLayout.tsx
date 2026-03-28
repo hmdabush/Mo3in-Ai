@@ -10,29 +10,41 @@ interface ToolLayoutProps {
     description: string;
     children: React.ReactNode;
     output?: React.ReactNode;
+    /** Use wide layout for tools with lots of controls */
+    wide?: boolean;
 }
 
-export default function ToolLayout({ icon, title, titleAr, description, children, output }: ToolLayoutProps) {
+export default function ToolLayout({ icon, title, titleAr, description, children, output, wide }: ToolLayoutProps) {
+    const hasOutput = !!output;
+
     return (
-        <div className={styles.container}>
-            <div className={styles.controlsSection}>
-                <div className={styles.header}>
-                    <div className={styles.headerIcon}>{icon}</div>
-                    <div>
-                        <h2 className={styles.title}>{title}</h2>
-                        <p className={styles.titleAr}>{titleAr}</p>
+        <div className={styles.page}>
+            {/* Top Bar */}
+            <div className={styles.topBar}>
+                <div className={styles.topBarInner}>
+                    <div className={styles.toolBadge}>
+                        <div className={styles.toolIcon}>{icon}</div>
+                        <div className={styles.toolInfo}>
+                            <span className={styles.toolTitle}>{titleAr}</span>
+                            <span className={styles.toolTitleEn}>{title}</span>
+                        </div>
                     </div>
-                </div>
-                <p className={styles.description}>{description}</p>
-                <div className={styles.controls}>
-                    {children}
+                    <p className={styles.toolDesc}>{description}</p>
                 </div>
             </div>
-            {output && (
-                <div className={styles.outputSection}>
-                    {output}
+
+            {/* Main Content */}
+            <div className={styles.main}>
+                <div className={`${styles.controls} ${wide ? styles.controlsWide : ''}`}>
+                    {children}
                 </div>
-            )}
+
+                {hasOutput && (
+                    <div className={styles.output}>
+                        {output}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

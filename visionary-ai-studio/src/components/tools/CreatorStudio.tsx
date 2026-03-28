@@ -241,16 +241,9 @@ export default function CreatorStudio() {
             ) : (
                 <div className={styles.empty}>
                     <div className={styles.emptyIcon}>
-                        <Sparkles size={48} />
+                        <Sparkles size={40} />
                     </div>
-                    <h3>Ready to Create</h3>
-                    <p>Upload a product image and configure your settings,<br />then click &quot;Generate&quot; to create AI variations</p>
-                    <div className={styles.steps}>
-                        <div className={styles.step}><span className={styles.stepNum}>1</span><span>Upload product image</span></div>
-                        <div className={styles.step}><span className={styles.stepNum}>2</span><span>Choose style & background</span></div>
-                        <div className={styles.step}><span className={styles.stepNum}>3</span><span>Set lighting & angle</span></div>
-                        <div className={styles.step}><span className={styles.stepNum}>4</span><span>Click Generate</span></div>
-                    </div>
+                    <p>ستظهر التصاميم هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

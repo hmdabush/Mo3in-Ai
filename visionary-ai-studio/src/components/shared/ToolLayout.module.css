@@ -1,91 +1,121 @@
-.container {
+.page {
     height: calc(100vh - 94px);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    background:
-        radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
-        var(--bg-primary);
+    overflow: hidden;
+    background: var(--bg-primary);
 }
 
-/* ======= CONTROLS (Centered) ======= */
-.controlsSection {
-    width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 28px 24px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* ======= TOP BAR ======= */
+.topBar {
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-primary);
+    padding: 14px 28px;
 }
 
-.header {
+.topBarInner {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.headerIcon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: rgba(6, 182, 212, 0.1);
+.toolBadge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.toolIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(6, 182, 212, 0.15);
     color: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
-.title {
-    font-size: 18px;
+.toolInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.toolTitle {
+    font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
-    margin: 0;
 }
 
-.titleAr {
-    font-size: 12px;
+.toolTitleEn {
+    font-size: 11px;
     color: var(--text-muted);
-    margin: 2px 0 0;
+    font-weight: 500;
 }
 
-.description {
-    font-size: 13px;
-    color: #94a3b8;
-    line-height: 1.6;
-    direction: rtl;
+.toolDesc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
     margin: 0;
-    padding: 10px 14px;
-    background: rgba(139, 92, 246, 0.05);
-    border: 1px solid rgba(139, 92, 246, 0.1);
-    border-radius: 10px;
+    direction: rtl;
+    border-right: 2px solid rgba(6, 182, 212, 0.3);
+    padding-right: 10px;
 }
 
+/* ======= MAIN SCROLLABLE ======= */
+.main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ======= CONTROLS ======= */
 .controls {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* ======= OUTPUT (Full Width) ======= */
-.outputSection {
+.controlsWide {
+    max-width: 1100px;
+}
+
+/* ======= OUTPUT ======= */
+.output {
     flex: 1;
     width: 100%;
-    padding: 20px 28px 40px;
-    border-top: 1px solid var(--border-primary);
-    background: var(--bg-secondary);
-    min-height: 200px;
+    min-height: 300px;
 }
 
 /* ======= RESPONSIVE ======= */
 @media (max-width: 768px) {
-    .controlsSection {
+    .topBar {
+        padding: 12px 16px;
+    }
+
+    .topBarInner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .controls {
         padding: 16px;
     }
 
-    .outputSection {
-        padding: 16px;
+    .toolDesc {
+        display: none;
     }
 }

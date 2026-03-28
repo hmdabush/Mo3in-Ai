@@ -238,9 +238,8 @@ export default function Photoshoot() {
                 </div>
             ) : (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><Camera size={48} /></div>
-                    <h3>Virtual Photoshoot</h3>
-                    <p>Upload a product image and select up to 6 shot types<br />to generate professional product photography</p>
+                    <div className={styles.emptyIcon}><Camera size={40} /></div>
+                    <p>ستظهر الصور هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

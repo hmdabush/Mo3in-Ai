@@ -199,9 +199,8 @@ export default function EditPro() {
                     </div>
                 ) : (
                     <div className={styles.canvasEmpty}>
-                        <div className={styles.canvasEmptyIcon}><Palette size={48} /></div>
-                        <h3>Edit PRO Canvas</h3>
-                        <p>Add images to start editing with filters,<br />color grading, and adjustments</p>
+                        <div className={styles.canvasEmptyIcon}><Palette size={40} /></div>
+                        <p>ارفع صورة للبدء في التعديل</p>
                     </div>
                 )}
             </div>

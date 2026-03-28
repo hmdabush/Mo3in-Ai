@@ -223,9 +223,8 @@ Make the main prompt extremely detailed with specific camera settings (lens mm, 
                     </div>
                 ) : (
                     <div className={styles.empty}>
-                        <div className={styles.emptyIcon}><Wand2 size={48} /></div>
-                        <h3>Prompt Engineer</h3>
-                        <p>Upload a reference image and AI will reverse-engineer<br />a detailed, high-quality diffusion model prompt</p>
+                        <div className={styles.emptyIcon}><Wand2 size={40} /></div>
+                        <p>ستظهر النتائج هنا بعد التحليل</p>
                     </div>
                 )
     );

@@ -181,9 +181,8 @@ export default function Plan() {
                     </div>
                 ) : (
                     <div className={styles.empty}>
-                        <div className={styles.emptyIcon}><Target size={48} /></div>
-                        <h3>Campaign Planner</h3>
-                        <p>Set your target market and campaign goal to generate<br />localized posts with visual ideas and hashtags</p>
+                        <div className={styles.emptyIcon}><Target size={40} /></div>
+                        <p>ستظهر الخطة هنا بعد الإنشاء</p>
                     </div>
                 )
     );

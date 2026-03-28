@@ -204,9 +204,8 @@ export default function Storyboard() {
                 </div>
             ) : (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><Film size={48} /></div>
-                    <h3>Create Your Storyboard</h3>
-                    <p>Write your ad script or story vision, and AI will<br />generate 9 sequential cinematic scenes</p>
+                    <div className={styles.emptyIcon}><Film size={40} /></div>
+                    <p>ستظهر المشاهد هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

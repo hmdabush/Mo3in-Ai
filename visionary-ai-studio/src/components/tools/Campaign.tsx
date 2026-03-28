@@ -147,9 +147,8 @@ export default function Campaign() {
                 </div>
             ) : (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><Megaphone size={48} /></div>
-                    <h3>Social Media Campaign</h3>
-                    <p>Design a cohesive 6-post visual funnel<br />for your social media feed</p>
+                    <div className={styles.emptyIcon}><Megaphone size={40} /></div>
+                    <p>ستظهر البوستات هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

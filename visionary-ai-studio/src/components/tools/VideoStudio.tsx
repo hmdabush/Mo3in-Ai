@@ -232,15 +232,8 @@ export default function VideoStudio() {
                 </div>
             ) : (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><Video size={48} /></div>
-                    <h3>Frame-to-Frame Evolution</h3>
-                    <p>Upload a First Frame and Last Frame to create<br />a cinematic video transition with AI</p>
-                    <div className={styles.emptySteps}>
-                        <div className={styles.emptyStep}><span className={styles.stepNum}>1</span>Upload First & Last Frame</div>
-                        <div className={styles.emptyStep}><span className={styles.stepNum}>2</span>Describe motion & audio</div>
-                        <div className={styles.emptyStep}><span className={styles.stepNum}>3</span>Choose camera & transition</div>
-                        <div className={styles.emptyStep}><span className={styles.stepNum}>4</span>Click Generate Video</div>
-                    </div>
+                    <div className={styles.emptyIcon}><Video size={40} /></div>
+                    <p>ستظهر الفيديوهات هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

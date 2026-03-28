@@ -187,9 +187,8 @@ export default function VoiceOver() {
                 </div>
             ) : (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}><Mic size={48} /></div>
-                    <h3>Voice Over Studio</h3>
-                    <p>Write your script, choose a voice actor,<br />and generate professional AI narration</p>
+                    <div className={styles.emptyIcon}><Mic size={40} /></div>
+                    <p>ستظهر الملفات الصوتية هنا بعد الإنشاء</p>
                 </div>
             )}
         </>

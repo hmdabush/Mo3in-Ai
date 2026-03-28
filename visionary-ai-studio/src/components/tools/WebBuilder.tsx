@@ -455,32 +455,9 @@ export default function WebBuilder() {
                 /* Empty State */
                 <div className={styles.empty}>
                     <div className={styles.emptyIcon}>
-                        <Globe size={48} />
+                        <Globe size={40} />
                     </div>
-                    <h3>Website Builder</h3>
-                    <p>
-                        صمم وأنشئ موقعك الإلكتروني بالكامل باستخدام الذكاء الاصطناعي.
-                        <br />
-                        حدد نوع موقعك، اختر الألوان والنمط، واترك Claude Opus يبني لك موقع احترافي كامل
-                    </p>
-                    <div className={styles.steps}>
-                        <div className={styles.step}>
-                            <span className={styles.stepNum}>1</span>
-                            <span>أدخل اسم ووصف موقعك</span>
-                        </div>
-                        <div className={styles.step}>
-                            <span className={styles.stepNum}>2</span>
-                            <span>اختر نوع الموقع والألوان</span>
-                        </div>
-                        <div className={styles.step}>
-                            <span className={styles.stepNum}>3</span>
-                            <span>حدد الأقسام المطلوبة</span>
-                        </div>
-                        <div className={styles.step}>
-                            <span className={styles.stepNum}>4</span>
-                            <span>اضغط Build Website</span>
-                        </div>
-                    </div>
+                    <p>سيظهر الموقع هنا بعد الإنشاء</p>
                 </div>
             )}
         </>
