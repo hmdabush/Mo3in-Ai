@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useAppStore } from '@/store/useAppStore';
+import React, { useEffect } from 'react';
+import { useAppStore, TOOLS, type ToolId } from '@/store/useAppStore';
 import TopNav from '@/components/layout/TopNav';
 import ProjectTabs from '@/components/layout/ProjectTabs';
 import CreatorStudio from '@/components/tools/CreatorStudio';
@@ -22,8 +22,33 @@ import Templates from '@/components/tools/Templates';
 import BrandKit from '@/components/tools/BrandKit';
 import UGCCreator from '@/components/tools/UGCCreator';
 
+const VALID_TOOLS = new Set(['dashboard', ...TOOLS.map(t => t.id)]);
+
 export default function AppShell() {
     const activeTool = useAppStore((s) => s.activeTool);
+    const setActiveTool = useAppStore((s) => s.setActiveTool);
+
+    // Sync URL hash → active tool on load and hash change
+    useEffect(() => {
+        const readHash = () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && VALID_TOOLS.has(hash)) {
+                setActiveTool(hash as ToolId);
+            }
+        };
+        readHash();
+        window.addEventListener('hashchange', readHash);
+        return () => window.removeEventListener('hashchange', readHash);
+    }, [setActiveTool]);
+
+    // Sync active tool → URL hash
+    useEffect(() => {
+        const hash = activeTool === 'dashboard' ? '' : activeTool;
+        const currentHash = window.location.hash.replace('#', '');
+        if (currentHash !== hash) {
+            window.history.replaceState(null, '', hash ? `#${hash}` : window.location.pathname);
+        }
+    }, [activeTool]);
 
     const renderTool = () => {
         switch (activeTool) {
