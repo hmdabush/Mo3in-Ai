@@ -17,7 +17,8 @@ export type ToolId =
   | 'social-publisher'
   | 'analytics'
   | 'templates'
-  | 'brand-kit';
+  | 'brand-kit'
+  | 'ugc';
 
 export type ToolCategory = 'visual' | 'marketing' | 'tools';
 
@@ -55,6 +56,7 @@ export const TOOLS: ToolDefinition[] = [
   { id: 'analytics', name: 'Analytics', nameAr: 'التحليلات', icon: 'TrendingUp', description: 'Performance analytics and insights', category: 'marketing' },
   { id: 'templates', name: 'Templates', nameAr: 'مكتبة القوالب', icon: 'LayoutGrid', description: 'Ready-made design templates', category: 'visual' },
   { id: 'brand-kit', name: 'Brand Kit', nameAr: 'هوية العلامة', icon: 'Brush', description: 'Brand colors, fonts and guidelines', category: 'visual' },
+  { id: 'ugc', name: 'UGC Creator', nameAr: 'صانع المحتوى الإعلاني', icon: 'Users', description: 'AI-generated UGC testimonial videos', category: 'marketing' },
 ];
 
 // Project types
@@ -294,6 +296,19 @@ export interface SocialPublisherState {
   isPublishing: boolean;
 }
 
+// UGC Creator specific state
+export interface UGCState {
+  productImage: UploadedImage | null;
+  characterImage: string;
+  generatedScript: string;
+  voiceUrl: string;
+  videoUrl: string;
+  isGeneratingCharacter: boolean;
+  isGeneratingScript: boolean;
+  isGeneratingVoice: boolean;
+  isGeneratingVideo: boolean;
+}
+
 // Project
 export interface Project {
   id: string;
@@ -309,6 +324,7 @@ export interface Project {
   videoStudio: VideoStudioState;
   webBuilder: WebBuilderState;
   socialPublisher: SocialPublisherState;
+  ugc: UGCState;
 }
 
 // Default states
@@ -430,6 +446,18 @@ const defaultSocialPublisher: SocialPublisherState = {
   isPublishing: false,
 };
 
+const defaultUGC: UGCState = {
+  productImage: null,
+  characterImage: '',
+  generatedScript: '',
+  voiceUrl: '',
+  videoUrl: '',
+  isGeneratingCharacter: false,
+  isGeneratingScript: false,
+  isGeneratingVoice: false,
+  isGeneratingVideo: false,
+};
+
 function createDefaultProject(id: string, name: string): Project {
   return {
     id,
@@ -445,6 +473,7 @@ function createDefaultProject(id: string, name: string): Project {
     videoStudio: { ...defaultVideoStudio },
     webBuilder: { ...defaultWebBuilder },
     socialPublisher: { ...defaultSocialPublisher },
+    ugc: { ...defaultUGC },
   };
 }
 
@@ -497,6 +526,9 @@ interface AppState {
 
   // SocialPublisher actions
   updateSocialPublisher: (updates: Partial<SocialPublisherState>) => void;
+
+  // UGC actions
+  updateUGC: (updates: Partial<UGCState>) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -647,6 +679,16 @@ export const useAppStore = create<AppState>((set, get) => ({
       projects: state.projects.map((p) =>
         p.id === state.activeProjectId
           ? { ...p, socialPublisher: { ...p.socialPublisher, ...updates } }
+          : p
+      ),
+    }));
+  },
+
+  updateUGC: (updates) => {
+    set((state) => ({
+      projects: state.projects.map((p) =>
+        p.id === state.activeProjectId
+          ? { ...p, ugc: { ...p.ugc, ...updates } }
           : p
       ),
     }));

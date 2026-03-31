@@ -20,6 +20,7 @@ import Dashboard from '@/components/tools/Dashboard';
 import Analytics from '@/components/tools/Analytics';
 import Templates from '@/components/tools/Templates';
 import BrandKit from '@/components/tools/BrandKit';
+import UGCCreator from '@/components/tools/UGCCreator';
 
 export default function AppShell() {
     const activeTool = useAppStore((s) => s.activeTool);
@@ -42,6 +43,7 @@ export default function AppShell() {
             case 'analytics': return <Analytics />;
             case 'templates': return <Templates />;
             case 'brand-kit': return <BrandKit />;
+            case 'ugc': return <UGCCreator />;
             default: return <Dashboard />;
         }
     };
